@@ -5,7 +5,6 @@ import time
 import urllib3
 import os
 import json
-import logging
 from urllib3.exceptions import InsecureRequestWarning
 urllib3.disable_warnings(InsecureRequestWarning)
 
