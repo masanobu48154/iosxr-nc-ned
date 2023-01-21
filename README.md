@@ -354,35 +354,116 @@ Now you can access the YANG Suite at http://10.10.20.50
 
 Since the target configuration of NETCONF NED is adding L3VPN to SR-MPLS, the necessary YANG modules can be expected to be VRF, INTERFACE, and BGP.You can use YANG Suite to select the modules we need.
 
-#### Create New Device Profile
+### __Create New Device Profile__
 
 Create a profile for your device to download and try YANG modules.
 
 Log in to Cisco YANG Suite with the username and password you specified when installing, and register `General Info` and `NETCONF`of dist-rtr01 from `Device profiles`.
 
-__Setup__ => __Device profiles__ => __Create new device__ 
-
-define "General Info".
+> __Setup__ => __Device profiles__ => __Create new device__ 
+> 
+> define "General Info".
 
 <img src="./images/ys004_device_profile_02.png" width="75%">
 
-Also define "NETCONF" as below.
+> Also define "NETCONF" as below.
 
 <img src="./images/ys005_device_profile_03.png" width="75%">
 
-Click "Check connectivity".
+> Click "Check connectivity".
 
 <img src="./images/ys006_device_profile_04.png" width="75%">
 
-#### Create New Repositry
+### __Create New Repositry__
 
 Create a `New repository` from `YANG files and repositories` and download all YANG modules from dist-rtr01.
 
-__Setup__ => __Device profiles__ => __Create new device__ 
+> __Setup__ => __YANG files and repositories__ => __New repositry__
+> 
+> Define any repository name.
 
+<img src="./images/ys008_repo_02.png " width="75%">
 
+> Select the created device profile from the `NETCONF` tab of `Add modules to repository` and click `Get schema list`.
+
+<img src="./images/ys009_repo_03.png " width="75%">
+
+> Select and download all of the displayed schemas list.
+> Once the download is completed, it will be displayed in `YANG modules in repository` on the left.
+
+<img src="./images/ys010_repo_04.png " width="75%">
+
+### __Create VRF Feature Module Set__
 
 Now, let's create a VRF YANG module set to get the VRF configuration from the device and set the VRF to the device.
+
+> __Setup__ => __YANG module sets__ => __New YANG set__
+> 
+> Select the created YANG files and repositories and define the YANG set name.
+
+<img src="./images/ys012_vrf_mset_02.png " width="75%">
+
+Search for modules that seem to be related to VRF from the repository. Guessing from the name of the module, Cisco-IOS-XR-um-vrf-cfg 2020-07-23 is probably the desired module.
+
+> Select __Cisco-IOS-XR-um-vrf-cfg 2020-07-23__ and include it in the module set.
+>
+> Click __Locate and add missing dependencies__.
+
+<img src="./images/ys013_vrf_mset_03.png " width="75%">
+
+A module set of VRF features is created that also incorporates dependent modules.
+
+<img src="./images/ys014_vrf_mset_04.png " width="75%">
+
+<img src="./images/ys015_vrf_nc_01.png " width="75%">
+
+<img src="./images/ys016_vrf_nc_02.png " width="75%">
+
+<img src="./images/ys017_vrf_nc_03.png " width="75%">
+
+<img src="./images/ys018_vrf_nc_04.png " width="75%">
+
+<img src="./images/ys019_if_ietf_mset_01.png " width="75%">
+
+<img src="./images/ys020_if_ietf_mset_02.png " width="75%">
+
+<img src="./images/ys021_if_ietf_nc_01.png " width="75%">
+
+<img src="./images/ys022_if_oconf_mset_01.png " width="75%">
+
+<img src="./images/ys023_if_oconf_mset_02.png " width="75%">
+
+<img src="./images/ys024_if_oconf_nc_01.png " width="75%">
+
+<img src="./images/ys025_if_um_mset_01.png " width="75%">
+
+<img src="./images/ys026_if_um_mset_02.png " width="75%">
+
+<img src="./images/ys027_if_um_nc_01.png " width="75%">
+
+<img src="./images/ys028_bgp_oconf_mset_01.png " width="75%">
+
+<img src="./images/ys029_bgp_oconf_mset_02.png " width="75%">
+
+<img src="./images/ys031_bgp_um_mset_01.png " width="75%">
+
+<img src="./images/ys032_bgp_um_mset_02.png " width="75%">
+
+<img src="./images/ys033_bgp_um_nc_01.png " width="75%">
+
+<img src="./images/ys034_ospf_um_mset_01.png " width="75%">
+
+<img src="./images/ys035_ospf_um_mset_02.png " width="75%">
+
+<img src="./images/ys036_ospf_um_nc_01.png " width="75%">
+
+<img src="./images/ys037_all_um_mset_01.png " width="75%">
+
+<img src="./images/ys038_all_um_mset_02.png " width="75%">
+
+<img src="./images/ys039_all_um_mset_03.png " width="75%">
+
+
 
 
 
