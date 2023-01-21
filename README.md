@@ -361,8 +361,7 @@ Create a profile for your device to download and try YANG modules.
 Log in to Cisco YANG Suite with the username and password you specified when installing, and register `General Info` and `NETCONF`of dist-rtr01 from `Device profiles`.
 
 > __Setup__ => __Device profiles__ => __Create new device__ 
-> 
-> define "General Info".
+> - define "General Info".
 
 <img src="./images/ys004_device_profile_02.png" width="75%">
 
@@ -379,17 +378,18 @@ Log in to Cisco YANG Suite with the username and password you specified when ins
 Create a `New repository` from `YANG files and repositories` and download all YANG modules from dist-rtr01.
 
 > __Setup__ => __YANG files and repositories__ => __New repositry__
-> 
-> Define any repository name.
+> - Define any repository name.
 
 <img src="./images/ys008_repo_02.png " width="75%">
 
-> Select the created device profile from the `NETCONF` tab of `Add modules to repository` and click `Get schema list`.
+> - Select the created device profile from the `NETCONF` tab of `Add modules to repository`.
+> - Click `Get schema list`.
 
 <img src="./images/ys009_repo_03.png " width="75%">
 
-> Select and download all of the displayed schemas list.
-> Once the download is completed, it will be displayed in `YANG modules in repository` on the left.
+> - Select and download all of the displayed schemas list.
+>
+>    Once the download is completed, it will be displayed in `YANG modules in repository` on the left.
 
 <img src="./images/ys010_repo_04.png " width="75%">
 
@@ -399,15 +399,16 @@ Now, let's create a VRF YANG module set to get the VRF configuration from the de
 
 > __Setup__ => __YANG module sets__ => __New YANG set__
 > 
-> Select the created YANG files and repositories and define the YANG set name.
+> - Select the created YANG repositories and define the YANG set name.
 
 <img src="./images/ys012_vrf_mset_02.png " width="75%">
 
+> - Type __vrf__ in the search box.
+
 Search for modules that seem to be related to VRF from the repository. Guessing from the name of the module, Cisco-IOS-XR-um-vrf-cfg 2020-07-23 is probably the desired module.
 
-> Select __Cisco-IOS-XR-um-vrf-cfg 2020-07-23__ and include it in the module set.
->
-> Click __Locate and add missing dependencies__.
+> - Select __Cisco-IOS-XR-um-vrf-cfg 2020-07-23__ and include it in the module set.
+> - Click __Locate and add missing dependencies__.
 
 <img src="./images/ys013_vrf_mset_03.png " width="75%">
 
@@ -415,13 +416,85 @@ A module set of VRF features is created that also incorporates dependent modules
 
 <img src="./images/ys014_vrf_mset_04.png " width="75%">
 
-<img src="./images/ys015_vrf_nc_01.png " width="75%">
+Let's verify with NETCONF that the VRF config can be pulled from the device.
+
+> __Protocols__ => __NETCONF__ => __New YANG set__
+> - Select the VRF feature module set created in the previous step for __YANG Set__.
+> - Select __Cisco-IOS-XR-um-vrf-cfg__ for __Module(s)__.
+> - Click __Load Module(s)__.
 
 <img src="./images/ys016_vrf_nc_02.png " width="75%">
 
+> - Select __get-config__ for __NETCONF Operation__.
+> - Select __dist-rtr01__ for __Device__.
+> - Check __vrf list node__ in the displayed YANG model tree.
+> - Click __Build RPC__.
+
 <img src="./images/ys017_vrf_nc_03.png " width="75%">
 
+> - Click __Run RPC(s)__.
+
 <img src="./images/ys018_vrf_nc_04.png " width="75%">
+
+You can pull the config with NETCONF like below.
+
+YANG Suite also finds __Cisco-IOS-XR-um-router-bgp-cfg__, a module that augments __Cisco-IOS-XR-um-vrf-cfg__.
+This module is also required when creating a NED.
+
+```xml
+<rpc-reply xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0" xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="urn:uuid:b2af9bf7-797d-431f-af81-0d8ecfda6584">
+ <data>
+  <vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-um-vrf-cfg">
+   <vrf>
+    <vrf-name>A</vrf-name>
+    <address-family>
+     <ipv4>
+      <unicast>
+       <import xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-um-router-bgp-cfg">
+        <route-target>
+         <two-byte-as-rts>
+          <two-byte-as-rt>
+           <as-number>65432</as-number>
+           <index>1111</index>
+           <stitching>false</stitching>
+          </two-byte-as-rt>
+         </two-byte-as-rts>
+        </route-target>
+       </import>
+       <export xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-um-router-bgp-cfg">
+        <route-target>
+         <two-byte-as-rts>
+          <two-byte-as-rt>
+           <as-number>65432</as-number>
+           <index>1111</index>
+           <stitching>false</stitching>
+          </two-byte-as-rt>
+         </two-byte-as-rts>
+        </route-target>
+       </export>
+      </unicast>
+     </ipv4>
+    </address-family>
+   </vrf>
+   <vrf>
+    <vrf-name>Mgmt-intf</vrf-name>
+    <address-family>
+     <ipv4>
+      <unicast/>
+     </ipv4>
+     <ipv6>
+      <unicast/>
+     </ipv6>
+    </address-family>
+   </vrf>
+  </vrfs>
+ </data>
+</rpc-reply>
+```
+
+### __Create INTERFACE Feature Module Set__
+
+Create a module set for the INTERFACE feature in the same way.
 
 <img src="./images/ys019_if_ietf_mset_01.png " width="75%">
 
