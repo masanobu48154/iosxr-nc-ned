@@ -106,7 +106,7 @@ developer@ncs#
 
 Check the NED of dist-rtr01.
 
-```shell
+```conf
 developer@ncs# show running-config devices device dist-rtr01 | include ned-id
  device-type cli ned-id cisco-ios-cli-6.67
 developer@ncs#
@@ -114,7 +114,7 @@ developer@ncs#
 
 Attempting to sync dist-rtr config to NSO fails. This is because IOS-XE has been replaced by IOS-XR in the new lab network.
 
-```shell
+```conf
 developer@ncs# devices device dist-rtr01 sync-from
 result false
 info Failed to connect to device dist-rtr01: connection refused: Failed to setup NED :: Unknown device ::
@@ -137,7 +137,7 @@ System uptime is 12 hours 6 minutes
 
 Change NED of `dist-rtr-01` to `cisco-iosxr-cli-7.32` .
 
-```shell
+```conf
 developer@ncs# config terminal
 Entering configuration mode terminal
 developer@ncs(config)# devices device dist-rtr01 device-type cli ned-id cisco-iosxr-cli-7.32
@@ -145,7 +145,7 @@ developer@ncs(config)# devices device dist-rtr01 device-type cli ned-id cisco-io
 
 Migrate to the new NED and commit.
 
-```shell
+```conf
 developer@ncs(config-device-dist-rtr01)# migrate new-ned-id cisco-iosxr-cli-7.32
 modified-path {
     path /devices/device[name='dist-rtr01']/config/ios:memory
@@ -238,7 +238,7 @@ developer@ncs(config-device-dist-rtr01)#
 
 sync `dist-rtr-01` config to NSO.
 
-```shell
+```conf
 developer@ncs(config-device-dist-rtr01)# top
 developer@ncs(config)# devices device dist-rtr01 sync-from
 result true
@@ -1021,16 +1021,910 @@ You can pull the config with NETCONF like below.
 
 ### __Create All Feature Module Set__
 
+If you can create NEDs using all the modules in __UM models__, you can handle devices flexibly like CLI NEDs. 
 
-
-<img src="./images/ys037_all_um_mset_01.png " width="75%">
+Create a module set using all modules of __UM models__ in Cisco YANG Suite. If the module set is generated without problems with dependencies, it is assumed that the NETCONF NED can also be created.
 
 <img src="./images/ys038_all_um_mset_02.png " width="75%">
 
+A module set was created with no problems with dependencies.
+You could also create a NETCONF NED containing all the __UM models__.
+
 <img src="./images/ys039_all_um_mset_03.png " width="75%">
 
+## 6. Create NETCONF NED
+
+NETCONF NEDs can be created with the NETCONF NED builder.
+
+The NETCONF NED builder functionality helps the NSO developer to onboard new kind of devices by fetching the YANG models from a reference device of this kind and building a NETCONF NED of them.
+
+Log in to NSO/NCS Host.
+
+```shell
+$ ssh -l developer 10.10.20.49
+developer@10.10.20.49's password:
+Last login: Tue Jan 10 17:35:21 2023 from 192.168.254.13
+[developer@nso ~]$
+```
+
+Go to NSO CLI shell mode.
+
+```shell
+[developer@nso ~]$ ncs_cli -C -u developer
+
+User developer last logged in 2023-01-10T14:38:18.25607-08:00, to nso, from 10.10.20.49 using rest-https
+developer connected from 192.168.254.13 using ssh on nso
+developer@ncs#
+```
+
+Enable devtools and create a new NETCONF NED builder project.
+
+```conf
+developer@ncs# devtools true
+developer@ncs# config t
+Entering configuration mode terminal
+developer@ncs(config)# netconf-ned-builder project cisco-iosxr 7.2.2
+Value for 'device' [core-rtr01,core-rtr02,dist-rtr01,dist-rtr02,...]: dist-rtr01
+Value for 'local-user' (<string>): cisco
+Value for 'vendor' (<string>): Cisco
+developer@ncs(config-project-cisco-iosxr/7.2.2)# max-download-threads 1
+developer@ncs(config-project-cisco-iosxr/7.2.2)# commit
+Commit complete.
+developer@ncs(config-project-cisco-iosxr/7.2.2)# end
+developer@ncs# show netconf-ned-builder project cisco-iosxr 7.2.2
+netconf-ned-builder project cisco-iosxr 7.2.2
+ download-cache-path /var/opt/ncs/state/netconf-ned-builder/cache/cisco-iosxr-nc-7.2.2
+ ned-directory-path  /var/opt/ncs/state/netconf-ned-builder/cisco-iosxr-nc-7.2.2
+developer@ncs#
+```
 
 
 
+
+
+
+
+
+
+
+
+```conf
+developer@ncs# devtools true
+developer@ncs# config t
+Entering configuration mode terminal
+developer@ncs(config)# netconf-ned-builder project cisco-iosxr 7.2.2
+Value for 'device' [core-rtr01,core-rtr02,dist-rtr01,dist-rtr02,...]: dist-rtr01
+Value for 'local-user' (<string>): cisco
+Value for 'vendor' (<string>): Cisco
+developer@ncs(config-project-cisco-iosxr/7.2.2)# max-download-threads 1
+developer@ncs(config-project-cisco-iosxr/7.2.2)# commit
+Commit complete.
+developer@ncs(config-project-cisco-iosxr/7.2.2)# end
+developer@ncs# show netconf-ned-builder project cisco-iosxr 7.2.2
+netconf-ned-builder project cisco-iosxr 7.2.2
+ download-cache-path /var/opt/ncs/state/netconf-ned-builder/cache/cisco-iosxr-nc-7.2.2
+ ned-directory-path  /var/opt/ncs/state/netconf-ned-builder/cisco-iosxr-nc-7.2.2
+developer@ncs#
+developer@ncs# config t
+Entering configuration mode terminal
+developer@ncs(config)# devices device dist-rtr01 device-type netconf ned-id netconf
+developer@ncs(config-device-dist-rtr01)# commit
+Commit complete.
+developer@ncs(config-device-dist-rtr01)# end
+developer@ncs# netconf-ned-builder project cisco-iosxr 7.2.2 fetch-module-list
+developer@ncs#
+developer@ncs# show netconf-ned-builder project cisco-iosxr 7.2.2 module
+module CISCO-ENTITY-FRU-CONTROL-MIB 2003-11-24
+ namespace http://tail-f.com/ns/mibs/CISCO-ENTITY-FRU-CONTROL-MIB/200311240000Z
+ location  [ NETCONF ]
+module Cisco-IOS-XR-Subscriber-infra-subdb-oper 2020-04-02
+ namespace http://cisco.com/ns/yang/Cisco-IOS-XR-Subscriber-infra-subdb-oper
+ location  [ NETCONF ]
+ submodule Cisco-IOS-XR-Subscriber-infra-subdb-oper-sub1 2020-04-02
+  location [ NETCONF ]
+ submodule Cisco-IOS-XR-Subscriber-infra-subdb-oper-sub2 2020-04-02
+  location [ NETCONF ]
+module Cisco-IOS-XR-aaa-aaacore-cfg 2019-04-05
+ namespace http://cisco.com/ns/yang/Cisco-IOS-XR-aaa-aaacore-cfg
+ location  [ NETCONF ]
+module Cisco-IOS-XR-aaa-diameter-base-mib-cfg 2019-04-05
+ namespace http://cisco.com/ns/yang/Cisco-IOS-XR-aaa-diameter-base-mib-cfg
+ location  [ NETCONF ]
+module Cisco-IOS-XR-aaa-diameter-cfg 2020-04-05
+ namespace http://cisco.com/ns/yang/Cisco-IOS-XR-aaa-diameter-cfg
+ location  [ NETCONF ]
+module Cisco-IOS-XR-aaa-diameter-oper 2020-10-19
+ namespace http://cisco.com/ns/yang/Cisco-IOS-XR-aaa-diameter-oper
+ location  [ NETCONF ]
+ submodule Cisco-IOS-XR-aaa-diameter-oper-sub1 2020-10-19
+  location [ NETCONF ]
+module Cisco-IOS-XR-aaa-lib-cfg 2019-04-05
+ namespace http://cisco.com/ns/yang/Cisco-IOS-XR-aaa-lib-cfg
+ location  [ NETCONF ]
+module Cisco-IOS-XR-aaa-lib-datatypes 2019-04-05
+ namespace http://cisco.com/ns/yang/Cisco-IOS-XR-aaa-lib-datatypes
+ location  [ NETCONF ]
+module Cisco-IOS-XR-aaa-locald-cfg 2019-11-24
+ namespace http://cisco.com/ns/yang/Cisco-IOS-XR-aaa-locald-cfg
+ location  [ NETCONF ]
+module Cisco-IOS-XR-aaa-locald-oper 2019-04-05
+ namespace http://cisco.com/ns/yang/Cisco-IOS-XR-aaa-locald-oper
+ location  [ NETCONF ]
+ submodule Cisco-IOS-XR-aaa-locald-oper-sub1 2019-04-05
+  location [ NETCONF ]
+module Cisco-IOS-XR-aaa-nacm-cfg 2020-06-01
+ namespace http://cisco.com/ns/yang/Cisco-IOS-XR-aaa-nacm-cfg
+ location  [ NETCONF ]
+module Cisco-IOS-XR-aaa-nacm-oper 2019-04-05
+ namespace http://cisco.com/ns/yang/Cisco-IOS-XR-aaa-nacm-oper
+ location  [ NETCONF ]
+ submodule Cisco-IOS-XR-aaa-nacm-oper-sub1 2019-04-05
+  location [ NETCONF ]
+module Cisco-IOS-XR-aaa-protocol-radius-cfg 2019-10-31
+ namespace http://cisco.com/ns/yang/Cisco-IOS-XR-aaa-protocol-radius-cfg
+ location  [ NETCONF ]
+module Cisco-IOS-XR-aaa-protocol-radius-oper 2019-04-05
+ namespace http://cisco.com/ns/yang/Cisco-IOS-XR-aaa-protocol-radius-oper
+ location  [ NETCONF ]
+ submodule Cisco-IOS-XR-aaa-protocol-radius-oper-sub1 2019-04-05
+  location [ NETCONF ]
+ submodule Cisco-IOS-XR-aaa-protocol-radius-oper-sub2 2019-04-05
+  location [ NETCONF ]
+module Cisco-IOS-XR-aaa-tacacs-cfg 2020-01-28
+ namespace http://cisco.com/ns/yang/Cisco-IOS-XR-aaa-tacacs-cfg
+ location  [ NETCONF ]
+module Cisco-IOS-XR-aaa-tacacs-oper 2019-04-05
+ namespace http://cisco.com/ns/yang/Cisco-IOS-XR-aaa-tacacs-oper
+Aborted: by user
+developer@ncs#
+developer@ncs#
+developer@ncs# netconf-ned-builder project cisco-iosxr 7.2.2 module Cisco-IOS-XR-um-* * select
+developer@ncs# show netconf-ned-builder project cisco-iosxr 7.2.2 module status
+NAME                                               REVISION    STATUS
+------------------------------------------------------------------------------------
+Cisco-IOS-XR-config-mda-cfg                        2019-04-05  selected,downloaded
+Cisco-IOS-XR-types                                 2019-12-03  selected,downloaded
+Cisco-IOS-XR-um-access-list-datatypes              2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-arp-cfg                            2019-10-10  selected,downloaded
+Cisco-IOS-XR-um-ethernet-services-access-list-cfg  2020-12-03  selected,downloaded
+Cisco-IOS-XR-um-flow-cfg                           2020-11-18  selected,downloaded
+Cisco-IOS-XR-um-grpc-cfg                           2020-08-01  selected,downloaded
+Cisco-IOS-XR-um-if-access-group-cfg                2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-if-arp-cfg                         2019-10-10  selected,downloaded
+Cisco-IOS-XR-um-if-bundle-cfg                      2020-05-26  selected,downloaded
+Cisco-IOS-XR-um-if-ethernet-cfg                    2019-12-12  selected,downloaded
+Cisco-IOS-XR-um-if-ip-address-cfg                  2020-05-27  selected,downloaded
+Cisco-IOS-XR-um-if-ipv4-cfg                        2020-10-02  selected,downloaded
+Cisco-IOS-XR-um-if-ipv6-cfg                        2020-10-02  selected,downloaded
+Cisco-IOS-XR-um-if-l2transport-cfg                 2020-02-10  selected,downloaded
+Cisco-IOS-XR-um-if-mpls-cfg                        2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-if-service-policy-qos-cfg          2020-10-01  selected,downloaded
+Cisco-IOS-XR-um-if-tunnel-cfg                      2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-if-vrf-cfg                         2019-10-10  selected,downloaded
+Cisco-IOS-XR-um-interface-cfg                      2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-ipv4-access-list-cfg               2020-12-03  selected,downloaded
+Cisco-IOS-XR-um-ipv4-prefix-list-cfg               2020-12-03  selected,downloaded
+Cisco-IOS-XR-um-ipv6-access-list-cfg               2020-12-03  selected,downloaded
+Cisco-IOS-XR-um-ipv6-prefix-list-cfg               2020-12-03  selected,downloaded
+Cisco-IOS-XR-um-l2-ethernet-cfg                    2020-08-01  selected,downloaded
+Cisco-IOS-XR-um-lacp-cfg                           2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-mpls-l3vpn-cfg                     2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-mpls-ldp-cfg                       2020-07-10  selected,downloaded
+Cisco-IOS-XR-um-mpls-lsd-cfg                       2020-11-10  selected,downloaded
+Cisco-IOS-XR-um-mpls-te-cfg                        2020-05-26  selected,downloaded
+Cisco-IOS-XR-um-multicast-routing-cfg              2019-08-20  selected,downloaded
+Cisco-IOS-XR-um-netconf-yang-cfg                   2020-03-06  selected,downloaded
+Cisco-IOS-XR-um-object-group-cfg                   2020-10-07  selected,downloaded
+Cisco-IOS-XR-um-policymap-classmap-cfg             2020-10-05  selected,downloaded
+Cisco-IOS-XR-um-router-amt-cfg                     2019-08-20  selected,downloaded
+Cisco-IOS-XR-um-router-bgp-cfg                     2020-11-10  selected,downloaded
+Cisco-IOS-XR-um-router-igmp-cfg                    2019-08-20  selected,downloaded
+Cisco-IOS-XR-um-router-isis-cfg                    2020-11-19  selected,downloaded
+Cisco-IOS-XR-um-router-mld-cfg                     2019-08-20  selected,downloaded
+Cisco-IOS-XR-um-router-msdp-cfg                    2019-08-20  selected,downloaded
+Cisco-IOS-XR-um-router-ospf-cfg                    2020-09-28  selected,downloaded
+Cisco-IOS-XR-um-router-ospfv3-cfg                  2020-05-26  selected,downloaded
+Cisco-IOS-XR-um-router-pim-cfg                     2020-10-15  selected,downloaded
+Cisco-IOS-XR-um-router-rib-cfg                     2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-router-static-cfg                  2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-rsvp-cfg                           2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-snmp-server-cfg                    2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-statistics-cfg                     2020-02-20  selected,downloaded
+Cisco-IOS-XR-um-telemetry-model-driven-cfg         2020-05-08  selected,downloaded
+Cisco-IOS-XR-um-traps-mpls-ldp-cfg                 2019-10-10  selected,downloaded
+Cisco-IOS-XR-um-vrf-cfg                            2020-07-23  selected,downloaded
+cisco-semver                                       2019-03-13  selected,downloaded
+ietf-inet-types                                    2013-07-15  selected,downloaded
+ietf-yang-types                                    2013-07-15  selected,downloaded
+tailf-common                                       2018-09-11  selected,downloaded
+
+developer@ncs# netconf-ned-builder project cisco-iosxr 7.2.2 module tailf-cli-extensions * select
+Aborted: no matching instances found
+developer@ncs# netconf-ned-builder project cisco-iosxr 7.2.2 module tailf-meta-extensions * select
+Aborted: no matching instances found
+developer@ncs#
+developer@ncs# show netconf-ned-builder project cisco-iosxr 7.2.2 ned-directory-path
+ned-directory-path /var/opt/ncs/state/netconf-ned-builder/cisco-iosxr-nc-7.2.2
+developer@ncs#
+developer@ncs# netconf-ned-builder project cisco-iosxr 7.2.2 export-ned to-directory packages
+tar-file /var/opt/ncs/packages/ncs-5.4.1-cisco-iosxr-nc-7.2.2.tar.gz
+developer@ncs#
+developer@ncs# packages reload
+reload-result {
+    package cisco-asa-cli-6.12
+    result true
+}
+reload-result {
+    package cisco-ios-cli-6.67
+    result true
+}
+reload-result {
+    package cisco-iosxr-cli-7.32
+    result true
+}
+reload-result {
+    package cisco-iosxr-nc-7.2.2
+    result true
+}
+reload-result {
+    package cisco-nx-cli-5.20
+    result true
+}
+reload-result {
+    package resource-manager
+    result true
+}
+reload-result {
+    package selftest
+    result true
+}
+reload-result {
+    package svi_verify_example
+    result true
+}
+developer@ncs#
+System message at 2023-01-11 15:16:13...
+    Subsystem stopped: ncs-dp-2-cisco-ios-cli-6.67:IOSDp
+developer@ncs#
+System message at 2023-01-11 15:16:13...
+    Subsystem stopped: ncs-dp-4-resource-manager:AddressallocationIPvalidation
+developer@ncs#
+System message at 2023-01-11 15:16:13...
+    Subsystem stopped: ncs-dp-3-cisco-nx-cli-5.20:NexusDp
+developer@ncs#
+System message at 2023-01-11 15:16:13...
+    Subsystem stopped: ncs-dp-1-cisco-asa-cli-6.12:ASADp
+developer@ncs#
+System message at 2023-01-11 15:16:13...
+    Subsystem started: ncs-dp-5-cisco-asa-cli-6.12:ASADp
+developer@ncs#
+System message at 2023-01-11 15:16:13...
+    Subsystem started: ncs-dp-6-cisco-ios-cli-6.67:IOSDp
+developer@ncs#
+System message at 2023-01-11 15:16:13...
+    Subsystem started: ncs-dp-7-cisco-nx-cli-5.20:NexusDp
+developer@ncs#
+System message at 2023-01-11 15:16:13...
+    Subsystem started: ncs-dp-8-resource-manager:AddressallocationIPvalidation
+developer@ncs#
+developer@ncs# config t
+Entering configuration mode terminal
+developer@ncs(config)# devices device dist-rtr01
+developer@ncs(config-device-dist-rtr01)# device-type netconf ned-id cisco-iosxr-nc-7.2.2
+developer@ncs(config-device-dist-rtr01)# commit
+Commit complete.
+developer@ncs(config-device-dist-rtr01)# devices device dist-rtr02
+developer@ncs(config-device-dist-rtr02)# device-type netconf ned-id cisco-iosxr-nc-7.2.2
+developer@ncs(config-device-dist-rtr02)# commit
+Commit complete.
+developer@ncs(config-device-dist-rtr02)# end
+developer@ncs# devices device dist-rtr01 sync-from
+result true
+developer@ncs#
+developer@ncs# devices device dist-rtr02 sync-from
+result true
+developer@ncs#
+developer@ncs# show running-config devices device dist-rtr01 config vrfs | display xml
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+      <name>dist-rtr01</name>
+      <config>
+        <vrfs xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-um-vrf-cfg">
+          <vrf>
+            <vrf-name>A</vrf-name>
+            <address-family>
+              <ipv4>
+                <unicast>
+                  <import xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-um-router-bgp-cfg">
+                    <route-target>
+                      <two-byte-as-rts>
+                        <two-byte-as-rt>
+                          <as-number>65432</as-number>
+                          <index>1111</index>
+                          <stitching>false</stitching>
+                        </two-byte-as-rt>
+                      </two-byte-as-rts>
+                    </route-target>
+                  </import>
+                  <export xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-um-router-bgp-cfg">
+                    <route-target>
+                      <two-byte-as-rts>
+                        <two-byte-as-rt>
+                          <as-number>65432</as-number>
+                          <index>1111</index>
+                          <stitching>false</stitching>
+                        </two-byte-as-rt>
+                      </two-byte-as-rts>
+                    </route-target>
+                  </export>
+                </unicast>
+              </ipv4>
+            </address-family>
+          </vrf>
+          <vrf>
+            <vrf-name>Mgmt-intf</vrf-name>
+            <address-family>
+              <ipv4>
+                <unicast/>
+              </ipv4>
+              <ipv6>
+                <unicast/>
+              </ipv6>
+            </address-family>
+          </vrf>
+        </vrfs>
+      </config>
+    </device>
+  </devices>
+</config>
+developer@ncs# show running-config devices device dist-rtr01 config interfaces | display xml
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+      <name>dist-rtr01</name>
+      <config>
+        <interfaces xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-um-interface-cfg">
+          <interface>
+            <interface-name>GigabitEthernet0/0/0/0</interface-name>
+            <ipv4>
+              <addresses xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-um-if-ip-address-cfg">
+                <address>
+                  <address>10.1.12.1</address>
+                  <netmask>255.255.255.0</netmask>
+                </address>
+              </addresses>
+            </ipv4>
+            <description>to_port0_dist_rtr02</description>
+          </interface>
+          <interface>
+            <interface-name>GigabitEthernet0/0/0/1</interface-name>
+            <description>to_user</description>
+          </interface>
+          <interface>
+            <interface-name>GigabitEthernet0/0/0/1.1111</interface-name>
+            <ipv4>
+              <addresses xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-um-if-ip-address-cfg">
+                <address>
+                  <address>11.1.1.1</address>
+                  <netmask>255.255.255.0</netmask>
+                </address>
+              </addresses>
+            </ipv4>
+            <vrf xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-um-if-vrf-cfg">A</vrf>
+            <encapsulation xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-um-l2-ethernet-cfg">
+              <dot1q>
+                <vlan-id>1111</vlan-id>
+              </dot1q>
+            </encapsulation>
+          </interface>
+          <interface>
+            <interface-name>Loopback0</interface-name>
+            <ipv4>
+              <addresses xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-um-if-ip-address-cfg">
+                <address>
+                  <address>10.0.0.1</address>
+                  <netmask>255.255.255.255</netmask>
+                </address>
+              </addresses>
+            </ipv4>
+          </interface>
+          <interface>
+            <interface-name>Loopback111</interface-name>
+            <ipv4>
+              <addresses xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-um-if-ip-address-cfg">
+                <address>
+                  <address>1.1.1.1</address>
+                  <netmask>255.255.255.255</netmask>
+                </address>
+              </addresses>
+            </ipv4>
+            <vrf xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-um-if-vrf-cfg">A</vrf>
+          </interface>
+          <interface>
+            <interface-name>MgmtEth0/RP0/CPU0/0</interface-name>
+            <ipv4>
+              <addresses xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-um-if-ip-address-cfg">
+                <address>
+                  <address>10.10.20.175</address>
+                  <netmask>255.255.255.0</netmask>
+                </address>
+              </addresses>
+            </ipv4>
+            <vrf xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-um-if-vrf-cfg">Mgmt-intf</vrf>
+          </interface>
+        </interfaces>
+      </config>
+    </device>
+  </devices>
+</config>
+developer@ncs# show running-config devices device dist-rtr01 config um-router-bgp-cfg:router | display xml
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+      <name>dist-rtr01</name>
+      <config>
+        <router xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-um-router-bgp-cfg">
+          <bgp>
+            <as>
+              <as-number>65432</as-number>
+              <address-families>
+                <address-family>
+                  <af-name>vpnv4-unicast</af-name>
+                </address-family>
+              </address-families>
+              <neighbors>
+                <neighbor>
+                  <neighbor-address>10.0.0.2</neighbor-address>
+                  <address-families>
+                    <address-family>
+                      <af-name>vpnv4-unicast</af-name>
+                    </address-family>
+                  </address-families>
+                  <remote-as>65432</remote-as>
+                  <update-source>Loopback0</update-source>
+                </neighbor>
+              </neighbors>
+              <bgp>
+                <log>
+                  <neighbor>
+                    <changes>
+                      <detail/>
+                    </changes>
+                  </neighbor>
+                </log>
+                <router-id>10.0.0.1</router-id>
+              </bgp>
+              <vrfs>
+                <vrf>
+                  <vrf-name>A</vrf-name>
+                  <address-families>
+                    <address-family>
+                      <af-name>ipv4-unicast</af-name>
+                      <redistribute>
+                        <ospf>
+                          <router-tag>A</router-tag>
+                        </ospf>
+                      </redistribute>
+                    </address-family>
+                  </address-families>
+                  <rd>
+                    <two-byte-as>
+                      <as-number>65432</as-number>
+                      <index>1111</index>
+                    </two-byte-as>
+                  </rd>
+                </vrf>
+              </vrfs>
+            </as>
+          </bgp>
+        </router>
+      </config>
+    </device>
+  </devices>
+</config>
+developer@ncs# show running-config devices device dist-rtr01 config um-router-ospf-cfg:router | display xml
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <devices xmlns="http://tail-f.com/ns/ncs">
+    <device>
+      <name>dist-rtr01</name>
+      <config>
+        <router xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-um-router-ospf-cfg">
+          <ospf>
+            <processes>
+              <process>
+                <process-name>1</process-name>
+                <router-id>10.0.0.1</router-id>
+                <address-family>
+                  <ipv4>
+                    <unicast/>
+                  </ipv4>
+                </address-family>
+                <areas>
+                  <area>
+                    <area-id>0</area-id>
+                    <interfaces>
+                      <interface>
+                        <interface-name>GigabitEthernet0/0/0/0</interface-name>
+                        <network>
+                          <point-to-point/>
+                        </network>
+                      </interface>
+                      <interface>
+                        <interface-name>Loopback0</interface-name>
+                        <network>
+                          <point-to-point/>
+                        </network>
+                        <passive>
+                          <enable/>
+                        </passive>
+                        <prefix-sid>
+                          <index>
+                            <sid-index>1</sid-index>
+                          </index>
+                        </prefix-sid>
+                      </interface>
+                    </interfaces>
+                  </area>
+                </areas>
+                <segment-routing>
+                  <mpls/>
+                </segment-routing>
+              </process>
+              <process>
+                <process-name>A</process-name>
+                <vrfs>
+                  <vrf>
+                    <vrf-name>A</vrf-name>
+                    <router-id>1.1.1.1</router-id>
+                    <redistribute>
+                      <bgp>
+                        <as>
+                          <as-number>65432</as-number>
+                          <metric>
+                            <default-metric>10</default-metric>
+                          </metric>
+                          <metric-type>2</metric-type>
+                        </as>
+                      </bgp>
+                    </redistribute>
+                    <address-family>
+                      <ipv4>
+                        <unicast/>
+                      </ipv4>
+                    </address-family>
+                    <areas>
+                      <area>
+                        <area-id>1.1.1.1</area-id>
+                        <interfaces>
+                          <interface>
+                            <interface-name>GigabitEthernet0/0/0/1.1111</interface-name>
+                          </interface>
+                          <interface>
+                            <interface-name>Loopback111</interface-name>
+                            <network>
+                              <point-to-point/>
+                            </network>
+                            <passive>
+                              <enable/>
+                            </passive>
+                          </interface>
+                        </interfaces>
+                      </area>
+                    </areas>
+                  </vrf>
+                </vrfs>
+              </process>
+            </processes>
+          </ospf>
+        </router>
+      </config>
+    </device>
+  </devices>
+</config>
+developer@ncs#
+developer@ncs# show running-config devices device dist-rtr01 config vrfs
+devices device dist-rtr01
+ config
+  vrfs vrf A
+   address-family ipv4 unicast import route-target two-byte-as-rts two-byte-as-rt 65432 1111 false
+   !
+   address-family ipv4 unicast export route-target two-byte-as-rts two-byte-as-rt 65432 1111 false
+   !
+  !
+  vrfs vrf Mgmt-intf
+   address-family ipv4 unicast
+   address-family ipv6 unicast
+  !
+ !
+!
+developer@ncs# show running-config devices device dist-rtr01 config interfaces
+devices device dist-rtr01
+ config
+  interfaces interface GigabitEthernet0/0/0/0
+   ipv4 addresses address address 10.1.12.1
+   ipv4 addresses address netmask 255.255.255.0
+   description to_port0_dist_rtr02
+  !
+  interfaces interface GigabitEthernet0/0/0/1
+   description to_user
+  !
+  interfaces interface GigabitEthernet0/0/0/1.1111
+   ipv4 addresses address address 11.1.1.1
+   ipv4 addresses address netmask 255.255.255.0
+   vrf A
+   um-l2-ethernet-cfg:encapsulation dot1q vlan-id 1111
+  !
+  interfaces interface Loopback0
+   ipv4 addresses address address 10.0.0.1
+   ipv4 addresses address netmask 255.255.255.255
+  !
+  interfaces interface Loopback111
+   ipv4 addresses address address 1.1.1.1
+   ipv4 addresses address netmask 255.255.255.255
+   vrf A
+  !
+  interfaces interface MgmtEth0/RP0/CPU0/0
+   ipv4 addresses address address 10.10.20.175
+   ipv4 addresses address netmask 255.255.255.0
+   vrf Mgmt-intf
+  !
+ !
+!
+developer@ncs# show running-config devices device dist-rtr01 config um-router-bgp-cfg:router
+devices device dist-rtr01
+ config
+  um-router-bgp-cfg:router bgp as 65432
+   address-families address-family vpnv4-unicast
+   !
+   neighbors neighbor 10.0.0.2
+    address-families address-family vpnv4-unicast
+    !
+    remote-as     65432
+    update-source Loopback0
+   !
+   bgp log neighbor changes detail
+   bgp router-id 10.0.0.1
+   vrfs vrf A
+    address-families address-family ipv4-unicast
+     redistribute ospf A
+     !
+    !
+    rd two-byte-as as-number 65432
+    rd two-byte-as index 1111
+   !
+  !
+ !
+!
+developer@ncs# show running-config devices device dist-rtr01 config um-router-ospf-cfg:router
+devices device dist-rtr01
+ config
+  um-router-ospf-cfg:router ospf processes process 1
+   router-id 10.0.0.1
+   address-family ipv4 unicast
+   areas area 0
+    interfaces interface GigabitEthernet0/0/0/0
+     network point-to-point
+    !
+    interfaces interface Loopback0
+     network point-to-point
+     passive enable
+     prefix-sid index sid-index 1
+    !
+   !
+   segment-routing mpls
+  !
+  um-router-ospf-cfg:router ospf processes process A
+   vrfs vrf A
+    router-id 1.1.1.1
+    redistribute bgp as 65432
+     metric default-metric 10
+     metric-type 2
+    !
+    address-family ipv4 unicast
+    areas area 1.1.1.1
+     interfaces interface GigabitEthernet0/0/0/1.1111
+     !
+     interfaces interface Loopback111
+      network point-to-point
+      passive enable
+     !
+    !
+   !
+  !
+ !
+!
+developer@ncs#
+developer@ncs# config t
+Entering configuration mode terminal
+developer@ncs(config)# devices device dist-rtr01 config
+developer@ncs(config-config)# vrfs vrf B
+developer@ncs(config-vrf-B)# address-family ipv4 unicast import route-target two-byte-as-rts two-byte-as-rt 65432 2222 false
+developer@ncs(config-two-byte-as-rt-65432/2222/false)# address-family ipv4 unicast export route-target two-byte-as-rts two-byte-as-rt 65432 2222 false
+developer@ncs(config-two-byte-as-rt-65432/2222/false)# !
+developer@ncs(config-two-byte-as-rt-65432/2222/false)# interfaces interface GigabitEthernet0/0/0/1.2221
+developer@ncs(config-interface-GigabitEthernet0/0/0/1.2221)# ipv4 addresses address address 22.2.1.1
+developer@ncs(config-interface-GigabitEthernet0/0/0/1.2221)# ipv4 addresses address netmask 255.255.255.0
+developer@ncs(config-interface-GigabitEthernet0/0/0/1.2221)# vrf B
+developer@ncs(config-interface-GigabitEthernet0/0/0/1.2221)# um-l2-ethernet-cfg:encapsulation dot1q vlan-id 2221
+developer@ncs(config-interface-GigabitEthernet0/0/0/1.2221)# !
+developer@ncs(config-interface-GigabitEthernet0/0/0/1.2221)# interfaces interface Loopback222
+developer@ncs(config-interface-Loopback222)# ipv4 addresses address address 2.2.2.1
+developer@ncs(config-interface-Loopback222)# ipv4 addresses address netmask 255.255.255.255
+developer@ncs(config-interface-Loopback222)# vrf B
+developer@ncs(config-interface-Loopback222)# !
+developer@ncs(config-interface-Loopback222)# um-router-bgp-cfg:router bgp as 65432
+developer@ncs(config-as-65432)# vrfs vrf B
+developer@ncs(config-vrf-B)# address-families address-family ipv4-unicast
+developer@ncs(config-address-family-ipv4-unicast)# redistribute ospf B
+developer@ncs(config-ospf-B)# rd two-byte-as as-number 65432
+developer@ncs(config-vrf-B)# rd two-byte-as index 2222
+developer@ncs(config-vrf-B)# !
+developer@ncs(config-vrf-B)# um-router-ospf-cfg:router ospf processes process B
+developer@ncs(config-process-B)# vrfs vrf B
+developer@ncs(config-vrf-B)# router-id 2.2.2.1
+developer@ncs(config-vrf-B)# redistribute bgp as 65432
+developer@ncs(config-as-65432)# metric default-metric 10
+developer@ncs(config-as-65432)# metric-type 2
+developer@ncs(config-as-65432)# address-family ipv4 unicast
+developer@ncs(config-vrf-B)# areas area 2.2.2.1
+developer@ncs(config-area-2.2.2.1)# interfaces interface GigabitEthernet0/0/0/1.2221
+developer@ncs(config-interface-GigabitEthernet0/0/0/1.2221)# interfaces interface Loopback222
+developer@ncs(config-interface-Loopback222)# network point-to-point
+developer@ncs(config-interface-Loopback222)# passive enable
+developer@ncs(config-interface-Loopback222)# top
+developer@ncs(config)# commit
+Commit complete.
+developer@ncs(config)#
+developer@ncs(config)#
+developer@ncs(config)# devices device dist-rtr02 config
+developer@ncs(config-config)# vrfs vrf B
+developer@ncs(config-vrf-B)# address-family ipv4 unicast import route-target two-byte-as-rts two-byte-as-rt 65432 2222 false
+developer@ncs(config-two-byte-as-rt-65432/2222/false)# address-family ipv4 unicast export route-target two-byte-as-rts two-byte-as-rt 65432 2222 false
+developer@ncs(config-two-byte-as-rt-65432/2222/false)# !
+developer@ncs(config-two-byte-as-rt-65432/2222/false)# interfaces interface GigabitEthernet0/0/0/1.2222
+developer@ncs(config-interface-GigabitEthernet0/0/0/1.2222)# ipv4 addresses address address 22.2.2.1
+developer@ncs(config-interface-GigabitEthernet0/0/0/1.2222)# ipv4 addresses address netmask 255.255.255.0
+developer@ncs(config-interface-GigabitEthernet0/0/0/1.2222)# vrf B
+developer@ncs(config-interface-GigabitEthernet0/0/0/1.2222)# um-l2-ethernet-cfg:encapsulation dot1q vlan-id 2222
+developer@ncs(config-interface-GigabitEthernet0/0/0/1.2222)# !
+developer@ncs(config-interface-GigabitEthernet0/0/0/1.2222)# interfaces interface Loopback222
+developer@ncs(config-interface-Loopback222)# ipv4 addresses address address 2.2.2.2
+developer@ncs(config-interface-Loopback222)# ipv4 addresses address netmask 255.255.255.255
+developer@ncs(config-interface-Loopback222)# vrf B
+developer@ncs(config-interface-Loopback222)# !
+developer@ncs(config-interface-Loopback222)# um-router-bgp-cfg:router bgp as 65432
+developer@ncs(config-as-65432)# vrfs vrf B
+developer@ncs(config-vrf-B)# address-families address-family ipv4-unicast
+developer@ncs(config-address-family-ipv4-unicast)# redistribute ospf B
+developer@ncs(config-ospf-B)# rd two-byte-as as-number 65432
+developer@ncs(config-vrf-B)# rd two-byte-as index 2222
+developer@ncs(config-vrf-B)# !
+developer@ncs(config-vrf-B)# um-router-ospf-cfg:router ospf processes process B
+developer@ncs(config-process-B)# vrfs vrf B
+developer@ncs(config-vrf-B)# router-id 2.2.2.2
+developer@ncs(config-vrf-B)# redistribute bgp as 65432
+developer@ncs(config-as-65432)# metric default-metric 10
+developer@ncs(config-as-65432)# metric-type 2
+developer@ncs(config-as-65432)# address-family ipv4 unicast
+developer@ncs(config-vrf-B)# areas area 2.2.2.2
+developer@ncs(config-area-2.2.2.2)# interfaces interface GigabitEthernet0/0/0/1.2222
+developer@ncs(config-interface-GigabitEthernet0/0/0/1.2222)# interfaces interface Loopback222
+developer@ncs(config-interface-Loopback222)# network point-to-point
+developer@ncs(config-interface-Loopback222)# passive enable
+developer@ncs(config-interface-Loopback222)#
+developer@ncs(config-interface-Loopback222)# commit
+Commit complete.
+developer@ncs(config-interface-Loopback222)# end
+developer@ncsあ#
+developer@ncs# exit
+[developer@nso packages]$
+[developer@nso packages]$ cd /var/opt/ncs/packages
+[developer@nso packages]$ ls
+cisco-asa-cli-6.12  cisco-ios-cli-6.67  cisco-iosxr-cli-7.32  cisco-nx-cli-5.20  ncs-5.4.1-cisco-iosxr-nc-7.2.2.tar.gz  resource-manager  selftest  svi_sample_service
+[developer@nso packages]$
+
+
+
+RP/0/RP0/CPU0:dist-rtr01#sh bgp vpnv4 uni vrf B
+Wed Jan 11 23:47:19.649 UTC
+BGP router identifier 10.0.0.1, local AS number 65432
+BGP generic scan interval 60 secs
+Non-stop routing is enabled
+BGP table state: Active
+Table ID: 0x0   RD version: 0
+BGP main routing table version 20
+BGP NSR Initial initsync version 11 (Reached)
+BGP NSR/ISSU Sync-Group versions 0/0
+BGP scan interval 60 secs
+
+Status codes: s suppressed, d damped, h history, * valid, > best
+              i - internal, r RIB-failure, S stale, N Nexthop-discard
+Origin codes: i - IGP, e - EGP, ? - incomplete
+   Network            Next Hop            Metric LocPrf Weight Path
+Route Distinguisher: 65432:2222 (default for vrf B)
+*> 2.2.2.1/32         0.0.0.0                  0         32768 ?
+*>i2.2.2.2/32         10.0.0.2                 0    100      0 ?
+*> 22.2.1.0/24        0.0.0.0                  0         32768 ?
+*>i22.2.2.0/24        10.0.0.2                 0    100      0 ?
+
+Processed 4 prefixes, 4 paths
+RP/0/RP0/CPU0:dist-rtr01#
+
+
+
+
+vrfs vrf B
+address-family ipv4 unicast import route-target two-byte-as-rts two-byte-as-rt 65432 2222 false
+address-family ipv4 unicast export route-target two-byte-as-rts two-byte-as-rt 65432 2222 false
+!
+interfaces interface GigabitEthernet0/0/0/1.2221
+ipv4 addresses address address 22.2.1.1
+ipv4 addresses address netmask 255.255.255.0
+vrf B
+um-l2-ethernet-cfg:encapsulation dot1q vlan-id 2221
+!
+interfaces interface Loopback222
+ipv4 addresses address address 2.2.2.1
+ipv4 addresses address netmask 255.255.255.255
+vrf B
+!
+um-router-bgp-cfg:router bgp as 65432
+vrfs vrf B
+address-families address-family ipv4-unicast
+redistribute ospf B
+rd two-byte-as as-number 65432
+rd two-byte-as index 2222
+!
+um-router-ospf-cfg:router ospf processes process B
+vrfs vrf B
+router-id 2.2.2.1
+redistribute bgp as 65432
+metric default-metric 10
+metric-type 2
+address-family ipv4 unicast
+areas area 2.2.2.1
+interfaces interface GigabitEthernet0/0/0/1.2221
+interfaces interface Loopback222
+network point-to-point
+passive enable
+
+
+
+vrfs vrf B
+address-family ipv4 unicast import route-target two-byte-as-rts two-byte-as-rt 65432 2222 false
+address-family ipv4 unicast export route-target two-byte-as-rts two-byte-as-rt 65432 2222 false
+!
+interfaces interface GigabitEthernet0/0/0/1.2222
+ipv4 addresses address address 22.2.2.1
+ipv4 addresses address netmask 255.255.255.0
+vrf B
+um-l2-ethernet-cfg:encapsulation dot1q vlan-id 2222
+!
+interfaces interface Loopback222
+ipv4 addresses address address 2.2.2.2
+ipv4 addresses address netmask 255.255.255.255
+vrf B
+!
+um-router-bgp-cfg:router bgp as 65432
+vrfs vrf B
+address-families address-family ipv4-unicast
+redistribute ospf B
+rd two-byte-as as-number 65432
+rd two-byte-as index 2222
+!
+um-router-ospf-cfg:router ospf processes process B
+vrfs vrf B
+router-id 2.2.2.2
+redistribute bgp as 65432
+metric default-metric 10
+metric-type 2
+address-family ipv4 unicast
+areas area 2.2.2.2
+interfaces interface GigabitEthernet0/0/0/1.2222
+interfaces interface Loopback222
+network point-to-point
+passive enable
+```
 
 
