@@ -37,7 +37,7 @@ Connect to Cisco Network Services Orchestrator (NSO) referring to [here](https:/
 
 In this demo, we will leave the distribution routers and remove the rest of the nodes. Replace the remaining IOS-XE routers with IOS-XR routers, then set up a segment routing MPLS cloud between them and build an L3VPN using BGP VPNv4.
 
-<img src="./images/cml_topo.png" width="50%">
+<img src="./images/cml_topo.png" width="75%">
 
 You can build this lab by running cml2.py from DevBox.
 
@@ -79,7 +79,7 @@ Run cml2.py.
 
 Go to https://10.10.20.161 and log in to CML to verify that nso_lob has been imported.
 
-<img src="./images/cml_dashboard.png" width="50%">
+<img src="./images/cml_dashboard.png" width="75%">
 
 ## 3. Apply CLI NED to new lab network
 
@@ -362,15 +362,15 @@ Log in to Cisco YANG Suite with the username and password you specified when ins
 > __Setup__ => __Device profiles__ => __Create new device__ 
 > - define "General Info".
 
-<img src="./images/ys004_device_profile_02.png" width="50%">
+<img src="./images/ys004_device_profile_02.png" width="75%">
 
 > Also define "NETCONF" as below.
 
-<img src="./images/ys005_device_profile_03.png" width="50%">
+<img src="./images/ys005_device_profile_03.png" width="75%">
 
 > Click "Check connectivity".
 
-<img src="./images/ys006_device_profile_04.png" width="50%">
+<img src="./images/ys006_device_profile_04.png" width="75%">
 
 ### __Create New Repositry__
 
@@ -379,18 +379,18 @@ Create a `New repository` from `YANG files and repositories` and download all YA
 > __Setup__ => __YANG files and repositories__ => __New repositry__
 > - Define any repository name.
 
-<img src="./images/ys008_repo_02.png " width="50%">
+<img src="./images/ys008_repo_02.png " width="75%">
 
 > - Select the created device profile from the `NETCONF` tab of `Add modules to repository`.
 > - Click `Get schema list`.
 
-<img src="./images/ys009_repo_03.png " width="50%">
+<img src="./images/ys009_repo_03.png " width="75%">
 
 > - Select and download all of the displayed schemas list.
 >
 >    Once the download is completed, it will be displayed in `YANG modules in repository` on the left.
 
-<img src="./images/ys010_repo_04.png " width="50%">
+<img src="./images/ys010_repo_04.png " width="75%">
 
 ### __Create VRF Feature Module Set__
 
@@ -400,7 +400,7 @@ Now, let's create a VRF YANG module set to get the VRF configuration from the de
 > 
 > - Select the created YANG repositories and define the YANG set name.
 
-<img src="./images/ys012_vrf_mset_02.png " width="50%">
+<img src="./images/ys012_vrf_mset_02.png " width="75%">
 
 > - Type __vrf__ in the search box.
 
@@ -409,7 +409,7 @@ Search for modules that seem to be related to VRF from the repository. Guessing 
 > - Select __Cisco-IOS-XR-um-vrf-cfg 2020-07-23__ and include it in the module set.
 > - Click __Locate and add missing dependencies__.
 
-<img src="./images/ys013_vrf_mset_03.png " width="50%">
+<img src="./images/ys013_vrf_mset_03.png " width="75%">
 
 A module set of VRF functionality is created, with dependencies between modules resolved as well.
 The modules that make up the module set are:
@@ -419,7 +419,7 @@ The modules that make up the module set are:
 - __cisco-semver 2019-03-13__
 - __ietf-inet-types 2013-07-15__
 
-<img src="./images/ys014_vrf_mset_04.png " width="50%">
+<img src="./images/ys014_vrf_mset_04.png " width="75%">
 
 Let's verify with NETCONF that the VRF config can be pulled from the device.
 
@@ -428,18 +428,18 @@ Let's verify with NETCONF that the VRF config can be pulled from the device.
 > - Select __Cisco-IOS-XR-um-vrf-cfg__ for __Module(s)__.
 > - Click __Load Module(s)__.
 
-<img src="./images/ys016_vrf_nc_02.png " width="50%">
+<img src="./images/ys016_vrf_nc_02.png " width="75%">
 
 > - Select __get-config__ for __NETCONF Operation__.
 > - Select __dist-rtr01__ for __Device__.
 > - Mark __vrf list node__ in the displayed YANG model tree.
 > - Click __Build RPC__.
 
-<img src="./images/ys017_vrf_nc_03.png " width="50%">
+<img src="./images/ys017_vrf_nc_03.png " width="75%">
 
 > - Click __Run RPC(s)__.
 
-<img src="./images/ys018_vrf_nc_04.png " width="50%">
+<img src="./images/ys018_vrf_nc_04.png " width="75%">
 
 You can pull the config with NETCONF like below.
 
@@ -513,11 +513,11 @@ First, let's verify from ietf.
 > - Select __ietf-interfaces 2014-05-08__ and include it in the module set.
 > - Click __Locate and add missing dependencies__.
 
-<img src="./images/ys019_if_ietf_mset_01.png " width="50%">
+<img src="./images/ys019_if_ietf_mset_01.png " width="75%">
 
 A module set of INTERFACE features is created that also incorporates dependent modules.
 
-<img src="./images/ys020_if_ietf_mset_02.png " width="50%">
+<img src="./images/ys020_if_ietf_mset_02.png " width="75%">
 
 > - Select the VRF feature module set created in the previous step for __INTERFACE YANG Set__.
 > - Select __ietf-interfaces__ for __Module(s)__.
@@ -528,7 +528,7 @@ A module set of INTERFACE features is created that also incorporates dependent m
 > - Click __Build RPC__.
 > - Click __Run RPC(s)__.
 
-<img src="./images/ys021_if_ietf_nc_01.png " width="50%">
+<img src="./images/ys021_if_ietf_nc_01.png " width="75%">
 
 You won't be able to pull the config like below.
 
@@ -541,11 +541,11 @@ You won't be able to pull the config like below.
 
 Next, let's verify with a module set that includes __openconfig-interfaces 2016-05-26__.
 
-<img src="./images/ys023_if_oconf_mset_02.png " width="50%">
+<img src="./images/ys023_if_oconf_mset_02.png " width="75%">
 
 Load __openconfig-interfaces__ and mark the __interface list node__ to __run RPC__.
 
-<img src="./images/ys024_if_oconf_nc_01.png " width="50%">
+<img src="./images/ys024_if_oconf_nc_01.png " width="75%">
 
 You can pull the config with NETCONF like below.
 
@@ -712,11 +712,11 @@ The modules that make up the module set are:
 - __tailf-common 2018-09-11__
 - __tailf-meta-extensions 2017-03-08__
 
-<img src="./images/ys026_if_um_mset_02.png " width="50%">
+<img src="./images/ys026_if_um_mset_02.png " width="75%">
 
 Load __Cisco-IOS-XR-um-interface-cfg__ and mark the __interface list node__ to __run RPC__.
 
-<img src="./images/ys027_if_um_nc_01.png " width="50%">
+<img src="./images/ys027_if_um_nc_01.png " width="75%">
 
 You can pull the config with NETCONF like below.
 
@@ -831,11 +831,11 @@ The modules that make up BGP modules set with resolved dependencies are:
 - __cisco-semver 2019-03-13__
 - __ietf-inet-types 2013-07-15__
 
-<img src="./images/ys032_bgp_um_mset_02.png " width="50%">
+<img src="./images/ys032_bgp_um_mset_02.png " width="75%">
 
 Load __Cisco-IOS-XR-um-router-bgp-cfg__ and mark the __bgp container node__ to __run RPC__.
 
-<img src="./images/ys033_bgp_um_nc_01.png " width="50%">
+<img src="./images/ys033_bgp_um_nc_01.png " width="75%">
 
 You can pull the config with NETCONF like below.
 
@@ -915,11 +915,11 @@ The modules that make up OSPF module set with resolved dependencies are:
 - __tailf-common 2018-09-11__
 - __tailf-meta-extensions 2017-03-08__
 
-<img src="./images/ys035_ospf_um_mset_02.png " width="50%">
+<img src="./images/ys035_ospf_um_mset_02.png " width="75%">
 
 Load __Cisco-IOS-XR-um-router-ospf-cfg 2020-09-28__ and mark the __ospf container node__ to __run RPC__.
 
-<img src="./images/ys036_ospf_um_nc_01.png " width="50%">
+<img src="./images/ys036_ospf_um_nc_01.png " width="75%">
 
 You can pull the config with NETCONF like below.
 
@@ -1023,11 +1023,11 @@ You can pull the config with NETCONF like below.
 
 
 
-<img src="./images/ys037_all_um_mset_01.png " width="50%">
+<img src="./images/ys037_all_um_mset_01.png " width="75%">
 
-<img src="./images/ys038_all_um_mset_02.png " width="50%">
+<img src="./images/ys038_all_um_mset_02.png " width="75%">
 
-<img src="./images/ys039_all_um_mset_03.png " width="50%">
+<img src="./images/ys039_all_um_mset_03.png " width="75%">
 
 
 
