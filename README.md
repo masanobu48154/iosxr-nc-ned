@@ -1034,9 +1034,19 @@ You could also create a NETCONF NED containing all the __UM models__.
 
 ## 6. Create NETCONF NED
 
-NETCONF NEDs can be created with the NETCONF NED builder.
+Create a NETCONF NED with __NETCONF NED builder__.
 
-The NETCONF NED builder functionality helps the NSO developer to onboard new kind of devices by fetching the YANG models from a reference device of this kind and building a NETCONF NED of them.
+See the site below for details.
+
+> #### __[NETCONF NED Builder](https://developer.cisco.com/docs/nso/guides/#!netconf-ned-builder/netconf-ned-builder "NETCONF NED Builder")__
+> 
+> Before a NETCONF capable device can be managed by NSO a corresponding NETCONF NED needs to be loaded. While no code needs to be written for such NED, it needs to contain YANG data models for this kind of devices.
+> 
+> While in some cases the YANG models may be provided by the device's vendor, devices that implement RFC 6022 YANG Module for NETCONF Monitoring are able to provide their YANG models using the functionality described in this RFC.
+> 
+> The NETCONF NED builder functionality helps the NSO developer to onboard new kind of devices by fetching the YANG models from a reference device of this kind and building a NETCONF NED of them.
+
+
 
 Log in to NSO/NCS Host.
 
@@ -1057,20 +1067,30 @@ developer connected from 192.168.254.13 using ssh on nso
 developer@ncs#
 ```
 
-Enable devtools and create a new NETCONF NED builder project.
+Enable devtools with the `devtools true` command.
 
 ```conf
 developer@ncs# devtools true
+```
+
+Create a new NETCONF NED builder project with the `netconf-ned-builder project` command.
+
+```conf
 developer@ncs# config t
 Entering configuration mode terminal
 developer@ncs(config)# netconf-ned-builder project cisco-iosxr 7.2.2
 Value for 'device' [core-rtr01,core-rtr02,dist-rtr01,dist-rtr02,...]: dist-rtr01
 Value for 'local-user' (<string>): cisco
 Value for 'vendor' (<string>): Cisco
-developer@ncs(config-project-cisco-iosxr/7.2.2)# max-download-threads 1
 developer@ncs(config-project-cisco-iosxr/7.2.2)# commit
 Commit complete.
 developer@ncs(config-project-cisco-iosxr/7.2.2)# end
+developer@ncs# 
+```
+
+Validate the created project with the `show netconf-ned-builder project` command..
+
+```conf
 developer@ncs# show netconf-ned-builder project cisco-iosxr 7.2.2
 netconf-ned-builder project cisco-iosxr 7.2.2
  download-cache-path /var/opt/ncs/state/netconf-ned-builder/cache/cisco-iosxr-nc-7.2.2
@@ -1078,11 +1098,123 @@ netconf-ned-builder project cisco-iosxr 7.2.2
 developer@ncs#
 ```
 
+Change `device-type` and `net-id` to `netconf` so that you can initiate a NETCONF connection to `dist-rtr01` and collect the list of supported YANG modules.
 
+```conf
+developer@ncs# config t
+Entering configuration mode terminal
+developer@ncs(config)# devices device dist-rtr01 device-type netconf ned-id netconf
+developer@ncs(config-device-dist-rtr01)# commit
+Commit complete.
+developer@ncs(config-device-dist-rtr01)# end
+```
 
+Running the `fetch-module-list` initiates NETCONF connection to the device and collects the list of YANG modules supported by the device which is stored in the module list under the NETCONF NED builder project.
 
+```conf
+developer@ncs# netconf-ned-builder project cisco-iosxr 7.2.2 fetch-module-list
+developer@ncs#
+```
 
+You can check the list of acquired modules with the following command.
 
+```conf
+developer@ncs# show netconf-ned-builder project cisco-iosxr 7.2.2 module
+module CISCO-ENTITY-FRU-CONTROL-MIB 2003-11-24
+ namespace http://tail-f.com/ns/mibs/CISCO-ENTITY-FRU-CONTROL-MIB/200311240000Z
+ location  [ NETCONF ]
+module Cisco-IOS-XR-Subscriber-infra-subdb-oper 2020-04-02
+ namespace http://cisco.com/ns/yang/Cisco-IOS-XR-Subscriber-infra-subdb-oper
+ location  [ NETCONF ]
+ submodule Cisco-IOS-XR-Subscriber-infra-subdb-oper-sub1 2020-04-02
+  location [ NETCONF ]
+ submodule Cisco-IOS-XR-Subscriber-infra-subdb-oper-sub2 2020-04-02
+  location [ NETCONF ]
+
+(snip)
+
+developer@ncs#
+```
+
+Once the list of modules has been gathered, it is necessary to decide which YANG modules to include in the NED. Use the `Select` action to indicate which modules to include in the NED.
+
+This time, let's include all of the __UM models__ in the NED.
+
+```conf
+developer@ncs# netconf-ned-builder project cisco-iosxr 7.2.2 module Cisco-IOS-XR-um-* * select
+developer@ncs# 
+```
+
+You can check the module status with the following command.
+
+All __UM models__ supported by dist-rtr01 have been downloaded and are in `selected` state. Also, modules that are `imported` in __UM models__ are also detected by NSO and are in the `selected` state.
+
+```conf
+developer@ncs# show netconf-ned-builder project cisco-iosxr 7.2.2 module status
+NAME                                               REVISION    STATUS
+------------------------------------------------------------------------------------
+Cisco-IOS-XR-config-mda-cfg                        2019-04-05  selected,downloaded
+Cisco-IOS-XR-types                                 2019-12-03  selected,downloaded
+Cisco-IOS-XR-um-access-list-datatypes              2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-arp-cfg                            2019-10-10  selected,downloaded
+Cisco-IOS-XR-um-ethernet-services-access-list-cfg  2020-12-03  selected,downloaded
+Cisco-IOS-XR-um-flow-cfg                           2020-11-18  selected,downloaded
+Cisco-IOS-XR-um-grpc-cfg                           2020-08-01  selected,downloaded
+Cisco-IOS-XR-um-if-access-group-cfg                2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-if-arp-cfg                         2019-10-10  selected,downloaded
+Cisco-IOS-XR-um-if-bundle-cfg                      2020-05-26  selected,downloaded
+Cisco-IOS-XR-um-if-ethernet-cfg                    2019-12-12  selected,downloaded
+Cisco-IOS-XR-um-if-ip-address-cfg                  2020-05-27  selected,downloaded
+Cisco-IOS-XR-um-if-ipv4-cfg                        2020-10-02  selected,downloaded
+Cisco-IOS-XR-um-if-ipv6-cfg                        2020-10-02  selected,downloaded
+Cisco-IOS-XR-um-if-l2transport-cfg                 2020-02-10  selected,downloaded
+Cisco-IOS-XR-um-if-mpls-cfg                        2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-if-service-policy-qos-cfg          2020-10-01  selected,downloaded
+Cisco-IOS-XR-um-if-tunnel-cfg                      2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-if-vrf-cfg                         2019-10-10  selected,downloaded
+Cisco-IOS-XR-um-interface-cfg                      2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-ipv4-access-list-cfg               2020-12-03  selected,downloaded
+Cisco-IOS-XR-um-ipv4-prefix-list-cfg               2020-12-03  selected,downloaded
+Cisco-IOS-XR-um-ipv6-access-list-cfg               2020-12-03  selected,downloaded
+Cisco-IOS-XR-um-ipv6-prefix-list-cfg               2020-12-03  selected,downloaded
+Cisco-IOS-XR-um-l2-ethernet-cfg                    2020-08-01  selected,downloaded
+Cisco-IOS-XR-um-lacp-cfg                           2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-mpls-l3vpn-cfg                     2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-mpls-ldp-cfg                       2020-07-10  selected,downloaded
+Cisco-IOS-XR-um-mpls-lsd-cfg                       2020-11-10  selected,downloaded
+Cisco-IOS-XR-um-mpls-te-cfg                        2020-05-26  selected,downloaded
+Cisco-IOS-XR-um-multicast-routing-cfg              2019-08-20  selected,downloaded
+Cisco-IOS-XR-um-netconf-yang-cfg                   2020-03-06  selected,downloaded
+Cisco-IOS-XR-um-object-group-cfg                   2020-10-07  selected,downloaded
+Cisco-IOS-XR-um-policymap-classmap-cfg             2020-10-05  selected,downloaded
+Cisco-IOS-XR-um-router-amt-cfg                     2019-08-20  selected,downloaded
+Cisco-IOS-XR-um-router-bgp-cfg                     2020-11-10  selected,downloaded
+Cisco-IOS-XR-um-router-igmp-cfg                    2019-08-20  selected,downloaded
+Cisco-IOS-XR-um-router-isis-cfg                    2020-11-19  selected,downloaded
+Cisco-IOS-XR-um-router-mld-cfg                     2019-08-20  selected,downloaded
+Cisco-IOS-XR-um-router-msdp-cfg                    2019-08-20  selected,downloaded
+Cisco-IOS-XR-um-router-ospf-cfg                    2020-09-28  selected,downloaded
+Cisco-IOS-XR-um-router-ospfv3-cfg                  2020-05-26  selected,downloaded
+Cisco-IOS-XR-um-router-pim-cfg                     2020-10-15  selected,downloaded
+Cisco-IOS-XR-um-router-rib-cfg                     2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-router-static-cfg                  2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-rsvp-cfg                           2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-snmp-server-cfg                    2019-06-10  selected,downloaded
+Cisco-IOS-XR-um-statistics-cfg                     2020-02-20  selected,downloaded
+Cisco-IOS-XR-um-telemetry-model-driven-cfg         2020-05-08  selected,downloaded
+Cisco-IOS-XR-um-traps-mpls-ldp-cfg                 2019-10-10  selected,downloaded
+Cisco-IOS-XR-um-vrf-cfg                            2020-07-23  selected,downloaded
+cisco-semver                                       2019-03-13  selected,downloaded
+ietf-inet-types                                    2013-07-15  selected,downloaded
+ietf-yang-types                                    2013-07-15  selected,downloaded
+tailf-common                                       2018-09-11  selected,downloaded
+```
+
+Now you are ready to create a NETCONF NED. Build NED using the `build-ned action`.
+
+```conf
+
+```
 
 
 
