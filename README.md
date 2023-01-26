@@ -6,7 +6,11 @@ This repository demonstrates creating an IOS-XR NETCONF NED using the Cisco NSO 
 
 The target configuration of NETCONF NED is L3VPN addition to SR-MPLS.
 
+CML's original lab network has too many devices and complexity to create and test NEDs. Therefore, we will configure the lab network only with IOS-XR. A script is provided to change the lab network in CML, so you can easily change the lab network.
 
+Since the lab network is changing, you will also need to change the applied NEDs to IOS-XR CLI NEDs in NSO to match the new lab network. You need to select a YANG module to create a NETCONF NED. So, install Cisco YANG Suite on DevBox and select the YANG modules necessary to add L3-VPN to SR-MPLS.
+
+Once you have selected the YANG modules you need, you can download the selected YANG modules to your NSO and build your NETCONF NED.
 
 ## Requirements
 
@@ -1676,6 +1680,7 @@ developer@ncs# show running-config devices device dist-rtr01 config um-router-os
 
 </details>
 
+## 8. Try to configure
 
 ```conf
 vrfs vrf B
