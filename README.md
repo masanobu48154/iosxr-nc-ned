@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository demonstrates creating an IOS-XR NETCONF NED using the Cisco NSO service application in the DevNet sandbox and migrating from the NED to the created NETCONF NED.
+This repository demonstrates creating an IOS-XR NETCONF NED using the Cisco NSO service application in the DevNet sandbox and migrating from the CLI NED to the created NETCONF NED.
 
 The target configuration of NETCONF NED is L3VPN addition to SR-MPLS.
 
@@ -32,6 +32,7 @@ Cisco Network Services Orchestrator (NSO)
 6. Create NETCONF NED
 7. Apply NETCONF NED to new lab network
 8. Try to configure
+9. Verify
 
 ## 1. Connect to the sandbox
 
@@ -1682,6 +1683,39 @@ developer@ncs# show running-config devices device dist-rtr01 config um-router-os
 
 ## 8. Try to configure
 
+Configure VRF, INTERFACE, BGP, OSPF for dist-rtr01 and dist-rtr02 with the values below from NSO.
+
+### dist-rtr01
+
+#### VRF
+
+| VRF NAME | ADDRESS-FAMILY | IMPORT RT  | EXPORT RT  |
+| -------- | -------------- | ---------- | ---------  |
+| B        | ipv4 unicast   | 65432:2222 | 65432:2222 |
+
+#### INTERFACE
+
+| INTERFACE       | VRF | VLAN  | ADDRESS/MASK |
+| --------------- | -------- | ----- | ------------ |
+| Gig0/0/0/1.2221 | B        | 2221  | 22.2.1.1/24  |
+| Loopback222     | B        | -     | 2.2.2.1/32   |
+
+#### BGP
+
+| AS    | VRF | ADDRESS-FAMILY  | RD         | REDISTRIBUTE |
+| ----- | -------- | --------------- | ---------- | ------------ |
+| 65432 | B        | ipv4-unicast    | 65432:2222 | ospf B       |
+
+#### OSPF
+
+| PROCESS | VRF | ROUTER-ID  | RD         | REDISTRIBUTE | ADDRESS-FAMILY | AREA    | INTERFACE       |
+| ------- | --- | ---------- | ---------- | ------------ | -------------- | ------- |---------------- |
+| B       | B   | 2.2.2.1    | 65432:2222 | bgp as 65432 | ipv4-unicast   | 2.2.2.1 | Gig0/0/0/1.2221<br>Loopback222 |
+
+
+<details>
+<summary><b>dist-rtr01 configuration</b></summary>
+
 ```conf
 vrfs vrf B
 address-family ipv4 unicast import route-target two-byte-as-rts two-byte-as-rt 65432 2222 false
@@ -1719,6 +1753,38 @@ network point-to-point
 passive enable
 ```
 
+</details>
+
+
+### dist-rtr02
+
+#### VRF
+
+| VRF NAME | ADDRESS-FAMILY | IMPORT RT  | EXPORT RT  |
+| -------- | -------------- | ---------- | ---------  |
+| B        | ipv4 unicast   | 65432:2222 | 65432:2222 |
+
+#### INTERFACE
+
+| INTERFACE       | VRF | VLAN  | ADDRESS/MASK |
+| --------------- | -------- | ----- | ------------ |
+| Gig0/0/0/1.2222 | B        | 2221  | 22.2.2.1/24  |
+| Loopback222     | B        | -     | 2.2.2.2/32   |
+
+#### BGP
+
+| AS    | VRF | ADDRESS-FAMILY  | RD         | REDISTRIBUTE |
+| ----- | -------- | --------------- | ---------- | ------------ |
+| 65432 | B        | ipv4-unicast    | 65432:2222 | ospf B       |
+
+#### OSPF
+
+| PROCESS | VRF | ROUTER-ID  | RD         | REDISTRIBUTE | ADDRESS-FAMILY | AREA    | INTERFACE       |
+| ------- | --- | ---------- | ---------- | ------------ | -------------- | ------- |---------------- |
+| B       | B   | 2.2.2.2    | 65432:2222 | bgp as 65432 | ipv4-unicast   | 2.2.2.2 | Gig0/0/0/1.2222<br>Loopback222 |
+
+<details>
+<summary><b>dist-rtr02 configuration</b></summary>
 
 ```conf
 vrfs vrf B
@@ -1757,6 +1823,11 @@ network point-to-point
 passive enable
 ```
 
+</details>
+
+## 9. Verify
+
+Execute the "sh bgp vpnv4 uni vrf B" command on dist-rtr01 to verify that the route information is propagated from dist-rtr02.
 
 ```conf
 RP/0/RP0/CPU0:dist-rtr01#sh bgp vpnv4 uni vrf B
