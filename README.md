@@ -368,7 +368,15 @@ Now you can access the YANG Suite at http://10.10.20.50
 
 Since the target configuration of NETCONF NED is adding L3VPN to SR-MPLS, the necessary YANG modules can be expected to be VRF, INTERFACE, OSPF, and BGP. You can use YANG Suite to select the modules we need.
 
-### __Create New Device Profile__
+1. [Create New Device Profile](#1-create-new-device-profile)
+2. [Create New Repositry](#2-create-new-repositry)
+3. [Create VRF Feature Module Set](#3-create-vrf-feature-module-set)
+4. [Create INTERFACE Feature Module Set](#4-create-interface-feature-module-set)
+5. [Create BGP Feature Module Set](#s5-create-bgp-feature-module-set)
+6. [Create OSPF Feature Module Set](#6-create-ospf-feature-module-set)
+7. [Create All Feature Module Set](#7-create-all-feature-module-set)
+
+### __1. Create New Device Profile__<a name="1-create-new-device-profile"></a>
 
 Create a profile for your device to download and try YANG modules.
 
@@ -387,7 +395,7 @@ Log in to Cisco YANG Suite with the username and password you specified when ins
 
 <img src="./images/ys006_device_profile_04.png" width="75%">
 
-### __Create New Repositry__
+### __2. Create New Repositry__<a name="2-create-new-repositry"></a>
 
 Create a `New repository` from `YANG files and repositories` and download all YANG modules from dist-rtr01.
 
@@ -409,7 +417,7 @@ Create a `New repository` from `YANG files and repositories` and download all YA
 
 <img src="./images/ys010_repo_04.png " width="75%">
 
-### __Create VRF Feature Module Set__
+### __3. Create VRF Feature Module Set__<a name="3-create-vrf-feature-module-set"></a>
 
 Now, let's create a VRF YANG module set to get the VRF configuration from the device and configure the VRF to the device.
 
@@ -523,7 +531,7 @@ This module is also required when creating a NED.
 </details>
 
 
-### __Create INTERFACE Feature Module Set__
+### __4. Create INTERFACE Feature Module Set__<a name="4-create-interface-feature-module-set"></a>
 
 Create a module set for the INTERFACE feature in the same way.
 
@@ -843,7 +851,7 @@ These modules are also required when creating a NED.
 </details>
 
 
-### __Create BGP Feature Module Set__
+### __5. Create BGP Feature Module Set__<a name="5-create-bgp-feature-module-set"></a>
 
 After creating some module sets, you can see that there are many __Cisco-IOS-XR-um__ modules.
 
@@ -944,7 +952,7 @@ You can pull the config with NETCONF like below.
 </details>
 
 
-### __Create OSPF Feature Module Set__
+### __6. Create OSPF Feature Module Set__<a name="6-create-ospf-feature-module-set"></a>
 
 Create OSPF feature module set using UM model.
 
@@ -1068,7 +1076,7 @@ You can pull the config with NETCONF like below.
 </details>
 
 
-### __Create All Feature Module Set__
+### __7. Create All Feature Module Set__<a name="7-create-all-feature-module-set"></a>
 
 If you can create a NED using all the modules in __UM models__, you can handle devices flexibly like CLI NED. 
 
