@@ -90,7 +90,7 @@ class Cml2:
         start_url = f"https://{self.host}/api/v0/labs/{lab_id}/start"
         s = requests.session()
         res_put_start = s.put(start_url, headers=self.headers_br, verify=False)
-        print(f"Lab started !!")
+        print(f"Lab started !! Lab ID = {lab_id}")
         return res_put_start.json()
 
     def get_labid(self):
