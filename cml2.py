@@ -121,7 +121,7 @@ class Cml2:
             res_put_stop = s.put(stop_url, headers=self.headers_br, verify=False)
             time.sleep(20)
             stop_labs_dic[lab] = res_put_stop.json()
-            print(f"{stop_labs_dic[lab]} stopped")
+            print(f"Lab stopped !! Lab ID = {lab}")
         return stop_labs_dic
 
     def wipe_labs(self):
@@ -140,7 +140,7 @@ class Cml2:
             res_put_wipe = s.put(wipe_url, headers=self.headers_br, verify=False)
             time.sleep(5)
             wipe_labs_dic[lab] = res_put_wipe.json()
-            print(f"{wipe_labs_dic[lab]} wiped")
+            print(f"Lab wiped !! Lab ID = {lab}")
         return wipe_labs_dic
 
     def delete_labs(self):
@@ -160,7 +160,7 @@ class Cml2:
             res_delete_labs = s.delete(
                 delete_labs_url, headers=self.headers_br, verify=False)
             delete_labs_dic[lab] = res_delete_labs
-            print(f"{delete_labs_dic[lab]} deleted !! Lab ID = {lab}")
+            print(f"Lab deleted !! Lab ID = {lab}")
         return delete_labs_dic
 
     def get_node(self):
