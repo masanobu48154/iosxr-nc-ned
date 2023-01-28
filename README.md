@@ -1882,6 +1882,6 @@ Very cool. :laughing:
 * [OS/platform-specific YANG models for Cisco's IOS-XR platforms](https://github.com/YangModels/yang/tree/main/vendor/cisco/xr)
 * [Programmability Configuration Guide for Cisco ASR 9000 Series Routers](https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/asr9k-r7-8/programmability/configuration/guide/b-programmability-cg-asr9000-78x.html)
 * [Cisco Feature Navigator](https://cfnng.cisco.com/ios-xr/yang-explorer/view-data-model?platform=ncs5500)
-* [CLI to Yang Mapping Tool](https://www.cisco.com/c/en/us/td/docs/iosxr/ncs5500/programmability/78x/b-programmability-cg-ncs5500-78x/drive-network-automation-using-programmable-yang-data-models.html#Cisco_Concept.dita_4b78c4f2-21db-4b2f-a0fb-309a5482ffac)
+
 
 
