@@ -76,7 +76,7 @@ class Cml2:
         res_post_virlv1 = s.post(
             create_urlv1, headers=self.headers_br, data=virl_data, verify=False)
         import_lab_dic = res_post_virlv1.json()
-        print(f'Lab imported Lab ID = {import_lab_dic["id"]}')
+        print(f'Lab imported !! Lab ID = {import_lab_dic["id"]}')
         return import_lab_dic["id"]
 
     def start_lab(self):
@@ -104,7 +104,6 @@ class Cml2:
         get_labs_url = f"https://{self.host}/api/v0/labs"
         s = requests.session()
         res_get_labs = s.get(get_labs_url, headers=self.headers_br, verify=False)
-        print(f"Lab ID = {res_get_labs.json()}")
         return res_get_labs.json()
 
     def stop_labs(self):
@@ -161,7 +160,7 @@ class Cml2:
             res_delete_labs = s.delete(
                 delete_labs_url, headers=self.headers_br, verify=False)
             delete_labs_dic[lab] = res_delete_labs
-            print(f"{delete_labs_dic[lab]} deleted")
+            print(f"{delete_labs_dic[lab]} deleted !! Lab ID = {lab}")
         return delete_labs_dic
 
     def get_node(self):
