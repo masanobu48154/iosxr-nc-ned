@@ -52,6 +52,7 @@ class Cml2:
         str
             Authentication token
         """
+        print("Getting Authentication token")
         login_url = f"https://{self.host}/api/v0/authenticate"
         s = requests.session()
         res_post_login = s.post(
@@ -67,6 +68,7 @@ class Cml2:
         str
             Imported lab ID
         """
+        print(f"Importing lab")
         create_urlv1 = f"https://{self.host}/api/v0/import?title=nso_lab"
         with open(self.yaml_path, 'rb') as f:
             virl_data = f.read()
@@ -74,6 +76,7 @@ class Cml2:
         res_post_virlv1 = s.post(
             create_urlv1, headers=self.headers_br, data=virl_data, verify=False)
         import_lab_dic = res_post_virlv1.json()
+        print(f"Lab imported Lab ID = {import_lab_dic["id"]}")
         return import_lab_dic["id"]
 
     def start_lab(self):
@@ -87,6 +90,7 @@ class Cml2:
         start_url = f"https://{self.host}/api/v0/labs/{lab_id}/start"
         s = requests.session()
         res_put_start = s.put(start_url, headers=self.headers_br, verify=False)
+        print(f"Lab started !!")
         return res_put_start.json()
 
     def get_labid(self):
@@ -100,6 +104,7 @@ class Cml2:
         get_labs_url = f"https://{self.host}/api/v0/labs"
         s = requests.session()
         res_get_labs = s.get(get_labs_url, headers=self.headers_br, verify=False)
+        print(f"Lab ID = {res_get_labs.json()}")
         return res_get_labs.json()
 
     def stop_labs(self):
@@ -110,6 +115,7 @@ class Cml2:
         dictionary
             Key = Lab ID, Value = API Status
         """
+        print("Stopping CML Lab")
         stop_labs_dic = {}
         for lab in self.get_labid():
             stop_url = f"https://{self.host}/api/v0/labs/{lab}/stop"
@@ -117,6 +123,7 @@ class Cml2:
             res_put_stop = s.put(stop_url, headers=self.headers_br, verify=False)
             time.sleep(20)
             stop_labs_dic[lab] = res_put_stop.json()
+            print(f"{stop_labs_dic[lab]} stopped")
         return stop_labs_dic
 
     def wipe_labs(self):
@@ -127,6 +134,7 @@ class Cml2:
         dictionary
             Key = Lab ID, Value = API Status
         """
+        print("Wiping CML Lab")
         wipe_labs_dic = {}
         self.stop_labs()
         for lab in self.get_labid():
@@ -135,6 +143,7 @@ class Cml2:
             res_put_wipe = s.put(wipe_url, headers=self.headers_br, verify=False)
             time.sleep(5)
             wipe_labs_dic[lab] = res_put_wipe.json()
+            print(f"{stop_labs_dic[lab]} wiped")
         return wipe_labs_dic
 
     def delete_labs(self):
@@ -154,6 +163,7 @@ class Cml2:
             res_delete_labs = s.delete(
                 delete_labs_url, headers=self.headers_br, verify=False)
             delete_labs_dic[lab] = res_delete_labs
+            print(f"{stop_labs_dic[lab]} deleted")
         return delete_labs_dic
 
     def get_node(self):
