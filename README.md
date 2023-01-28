@@ -374,7 +374,7 @@ Since the target configuration of NETCONF NED is adding L3VPN to SR-MPLS, the ne
 4. [Create INTERFACE Feature Module Set](#4-create-interface-feature-module-set)
 5. [Create BGP Feature Module Set](#5-create-bgp-feature-module-set)
 6. [Create OSPF Feature Module Set](#6-create-ospf-feature-module-set)
-7. [Create All Feature Module Set](#7-create-all-feature-module-set)
+7. [Create All Feature Module Set](#7-create-all-um-models-module-set)
 
 ### __1. Create New Device Profile__<a name="1-create-new-device-profile"></a>
 
@@ -1076,7 +1076,7 @@ You can pull the config with NETCONF like below.
 </details>
 
 
-### __7. Create All Feature Module Set__<a name="7-create-all-feature-module-set"></a>
+### __7. Create All UM models Module Set__<a name="7-create-all-um-models-module-set"></a>
 
 If you can create a NED using all the modules in __UM models__, you can handle devices flexibly like CLI NED. 
 
