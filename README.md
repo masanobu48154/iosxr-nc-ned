@@ -1854,6 +1854,8 @@ Processed 4 prefixes, 4 paths
 RP/0/RP0/CPU0:dist-rtr01#
 ```
 
+Very cool. :laughing:
+
 ## Additional Resources
 
 * [Cisco Network Services Orchestrator (NSO) Dev Center](https://developer.cisco.com/site/nso/)
