@@ -161,7 +161,7 @@ class Cml2:
             res_delete_labs = s.delete(
                 delete_labs_url, headers=self.headers_br, verify=False)
             delete_labs_dic[lab] = res_delete_labs
-            print(f"{stop_labs_dic[lab]} deleted")
+            print(f"{delete_labs_dic[lab]} deleted")
         return delete_labs_dic
 
     def get_node(self):
