@@ -115,7 +115,6 @@ class Cml2:
         dictionary
             Key = Lab ID, Value = API Status
         """
-        print("Stopping CML Lab")
         stop_labs_dic = {}
         for lab in self.get_labid():
             stop_url = f"https://{self.host}/api/v0/labs/{lab}/stop"
@@ -134,7 +133,6 @@ class Cml2:
         dictionary
             Key = Lab ID, Value = API Status
         """
-        print("Wiping CML Lab")
         wipe_labs_dic = {}
         self.stop_labs()
         for lab in self.get_labid():
@@ -143,7 +141,7 @@ class Cml2:
             res_put_wipe = s.put(wipe_url, headers=self.headers_br, verify=False)
             time.sleep(5)
             wipe_labs_dic[lab] = res_put_wipe.json()
-            print(f"{stop_labs_dic[lab]} wiped")
+            print(f"{wipe_labs_dic[lab]} wiped")
         return wipe_labs_dic
 
     def delete_labs(self):
