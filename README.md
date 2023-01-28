@@ -1825,7 +1825,7 @@ passive enable
 
 ## 9. Verify
 
-Execute the "sh bgp vpnv4 uni vrf B" command on dist-rtr01 to verify that the route information is propagated from dist-rtr02.
+Execute the `sh bgp vpnv4 uni vrf B` command on dist-rtr01 to verify that the route information is propagated from dist-rtr02.
 
 ```conf
 RP/0/RP0/CPU0:dist-rtr01#sh bgp vpnv4 uni vrf B
