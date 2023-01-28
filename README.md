@@ -1,4 +1,4 @@
-# Migration demo from CLI NED to NETCONF NED
+# Demo of CLI NED to NETCONF NED Migration
 
 ## Overview
 
