@@ -24,21 +24,20 @@ Cisco Network Services Orchestrator (NSO)
 
 ## What you do is
 
-1. Connect to the sandbox
-2. Change lab network in CML2
-3. Apply CLI NED to new lab network
-4. Install Cisco YANG Suite
-5. Select YANG module to create NETCONF NED
-6. Create NETCONF NED
-7. Apply NETCONF NED to new lab network
-8. Try to configure
-9. Verify
++ [Step 1: Connect to the sandbox](#connect-to-the-sandbox-step-1)
++ [Step 2: Change lab network in CML2](#change-lab-network-in-cml2-step-2)
++ [Step 3: Apply CLI NED to new lab network](#apply-cli-ned-to-new-lab-network-step-3)
++ [Step 4: Install Cisco YANG Suite](#install-cisco-yang-suite-step-4)
++ [Step 5: Select YANG module to create NETCONF NED](#select-yang-module-to-create-netconf-ned-step-5)
++ [Step 6: Create NETCONF NED](#create-netconf-ned-step-6)
++ [Step 7: Try to configure](#try-to-configure-step-7)
++ [Step 8: Verify](#verify-step-8)
 
-## 1. Connect to the sandbox
+## Step 1: Connect to the sandbox<a name="connect-to-the-sandbox-step-1"></a>
 
 Connect to Cisco Network Services Orchestrator (NSO) referring to [here](https://developer.cisco.com/docs/sandbox/ "Devnet Sandbox Document").
 
-## 2. Change lab network in CML2
+## Step 2: Change lab network in CML2<a name="change-lab-network-in-cml2-step-2"></a>
 
 In this demo you leave the distribution router which is IOS-XE and remove the rest of the nodes. Replace the IOS of the remaining distribution routers from XE to XR, set up a segment routing MPLS cloud between them and build a L3VPN using BGP VPNv4.
 
@@ -79,7 +78,16 @@ Go to the iosxr-nc-ned directory and set the CML2 username and password as envir
 Run cml2.py.
 
 ```shell
-(py3venv) [developer@devbox iosxr-nc-ned]$ python3 cml2.py
+(py3venv) [developer@devbox iosxr-nc-ned]$ python3 cml2.py 
+Getting Authentication token
+Lab stopped !! Lab ID = dd66d7
+Lab wiped !! Lab ID = dd66d7
+Lab deleted !! Lab ID = dd66d7
+Getting Authentication token
+Importing lab
+Lab imported !! Lab ID = ef911e
+Lab started !! Lab ID = ef911e
+(py3venv) [developer@devbox iosxr-nc-ned]$ 
 ```
 
 Go to https://10.10.20.161 and log in to CML to verify that nso_lob has been imported.
@@ -88,7 +96,7 @@ Go to https://10.10.20.161 and log in to CML to verify that nso_lob has been imp
 
 It takes a few minutes for the IOS XRv 9000 to boot up, so grab a cup of coffee and wait.
 
-## 3. Apply CLI NED to new lab network
+## Step 3: Apply CLI NED to new lab network<a name="apply-cli-ned-to-new-lab-network-step-3"></a>
 
 In the original lab network, dist-rtr01 and dist-rtr02 had IOS CLI NED applied, so change them to IOS-XR CLI NED to match the new lab network.
 
@@ -254,7 +262,7 @@ developer@ncs(config)#
 
 `dist-rtr-02` to the new NED as well. And check the running-config with `show running-config devices device { DEVICE } config `.
 
-## 4. Install Cisco YANG Suite
+## Step 4: Install Cisco YANG Suite<a name="install-cisco-yang-suite-step-4"></a>
 
 Before building NED with NSO, let's install the very cool [Cisco YANG Suite](https://github.com/CiscoDevNet/yangsuite "Cisco YANG Suite") in DevBox to select the YANG modules we need.
 
@@ -356,7 +364,7 @@ yangsuite_1  | spawned uWSGI worker 5 (pid: 66, cores: 1)
 
 Now you can access the YANG Suite at http://10.10.20.50
 
-## 5. Select YANG module to create NETCONF NED
+## Step 5: Select YANG module to create NETCONF NED<a name="select-yang-module-to-create-netconf-ned-step-5"></a>
 
 Since the target configuration of NETCONF NED is adding L3VPN to SR-MPLS, the necessary YANG modules can be expected to be VRF, INTERFACE, OSPF, and BGP. You can use YANG Suite to select the modules we need.
 
@@ -1073,7 +1081,7 @@ You could also create a NETCONF NED containing all the __UM models__.
 
 <img src="./images/ys039_all_um_mset_03.png " width="75%">
 
-## 6. Create NETCONF NED
+## Step 6: Create NETCONF NED<a name="create-netconf-ned-step-6"></a>
 
 Create a NETCONF NED with __NETCONF NED builder__.
 
@@ -1086,8 +1094,6 @@ See the site below for details.
 > While in some cases the YANG models may be provided by the device's vendor, devices that implement RFC 6022 YANG Module for NETCONF Monitoring are able to provide their YANG models using the functionality described in this RFC.
 > 
 > The NETCONF NED builder functionality helps the NSO developer to onboard new kind of devices by fetching the YANG models from a reference device of this kind and building a NETCONF NED of them.
-
-
 
 Log in to NSO/NCS Host.
 
@@ -1679,7 +1685,7 @@ developer@ncs# show running-config devices device dist-rtr01 config um-router-os
 
 </details>
 
-## 8. Try to configure
+## Step 7: Try to configure<a name="try-to-configure-step-7"></a>
 
 Configure VRF, INTERFACE, BGP, OSPF for dist-rtr01 and dist-rtr02 with the values below from NSO.
 
@@ -1823,7 +1829,7 @@ passive enable
 
 </details>
 
-## 9. Verify
+## Step 8: Verify<a name="verify-step-8"></a>
 
 Execute the `sh bgp vpnv4 uni vrf B` command on dist-rtr01 to verify that the route information is propagated from dist-rtr02.
 
