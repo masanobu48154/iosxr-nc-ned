@@ -76,7 +76,7 @@ class Cml2:
         res_post_virlv1 = s.post(
             create_urlv1, headers=self.headers_br, data=virl_data, verify=False)
         import_lab_dic = res_post_virlv1.json()
-        print(f"Lab imported Lab ID = {import_lab_dic["id"]}")
+        print(f'Lab imported Lab ID = {import_lab_dic["id"]}')
         return import_lab_dic["id"]
 
     def start_lab(self):
