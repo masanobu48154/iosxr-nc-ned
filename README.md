@@ -374,7 +374,7 @@ Since the target configuration of NETCONF NED is adding L3VPN to SR-MPLS, the ne
 4. [Create INTERFACE Feature Module Set](#4-create-interface-feature-module-set)
 5. [Create BGP Feature Module Set](#5-create-bgp-feature-module-set)
 6. [Create OSPF Feature Module Set](#6-create-ospf-feature-module-set)
-7. [Create All Feature Module Set](#7-create-all-um-models-module-set)
+7. [Create All UM models Module Set](#7-create-all-um-models-module-set)
 
 ### __1. Create New Device Profile__<a name="1-create-new-device-profile"></a>
 
