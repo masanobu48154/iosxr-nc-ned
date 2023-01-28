@@ -40,7 +40,7 @@ Connect to Cisco Network Services Orchestrator (NSO) referring to [here](https:/
 
 ## 2. Change lab network in CML2
 
-In this demo, we will leave the distribution routers and remove the rest of the nodes. Replace the remaining IOS-XE routers with IOS-XR routers, then set up a segment routing MPLS cloud between them and build an L3VPN using BGP VPNv4.
+In this demo you leave the distribution router which is IOS-XE and remove the rest of the nodes. Replace the IOS of the remaining distribution routers from XE to XR, set up a segment routing MPLS cloud between them and build a L3VPN using BGP VPNv4.
 
 <img src="./images/cml_topo.png" width="75%">
 
@@ -292,7 +292,7 @@ Go to the yangsuite/docker directory and replace `localhost` in each configurati
 (py3venv) [developer@devbox docker]$ 
 ```
 
-Running start_yang_suite.sh will ask to set the　username, password, email address, and certificate details. The output will look similar to the below
+Running start_yang_suite.sh will ask to set the username, password, email address, and certificate details. The output will look similar to the below
 
 ```shell
 (py3venv) [developer@devbox docker]$ bash ./start_yang_suite.sh
@@ -358,7 +358,7 @@ Now you can access the YANG Suite at http://10.10.20.50
 
 ## 5. Select YANG module to create NETCONF NED
 
-Since the target configuration of NETCONF NED is adding L3VPN to SR-MPLS, the necessary YANG modules can be expected to be VRF, INTERFACE, OSPF, and BGP.You can use YANG Suite to select the modules we need.
+Since the target configuration of NETCONF NED is adding L3VPN to SR-MPLS, the necessary YANG modules can be expected to be VRF, INTERFACE, OSPF, and BGP. You can use YANG Suite to select the modules we need.
 
 ### __Create New Device Profile__
 
@@ -403,7 +403,7 @@ Create a `New repository` from `YANG files and repositories` and download all YA
 
 ### __Create VRF Feature Module Set__
 
-Now, let's create a VRF YANG module set to get the VRF configuration from the device and set the VRF to the device.
+Now, let's create a VRF YANG module set to get the VRF configuration from the device and configure the VRF to the device.
 
 > __Setup__ => __YANG module sets__ => __New YANG set__
 > 
@@ -411,10 +411,9 @@ Now, let's create a VRF YANG module set to get the VRF configuration from the de
 
 <img src="./images/ys012_vrf_mset_02.png " width="75%">
 
-> - Type __vrf__ in the search box.
-
 Search for modules that seem to be related to VRF from the repository. Guessing from the name of the module, Cisco-IOS-XR-um-vrf-cfg 2020-07-23 is probably the desired module.
 
+> - Type __vrf__ in the search box.
 > - Select __Cisco-IOS-XR-um-vrf-cfg 2020-07-23__ and include it in the module set.
 > - Click __Locate and add missing dependencies__.
 
@@ -520,18 +519,17 @@ This module is also required when creating a NED.
 
 Create a module set for the INTERFACE feature in the same way.
 
-> - Type __interface__ in the search box.
-
 You will find modules defined by ietf, openconfig and cisco. 
 
 First, let's verify from ietf.
 
+> - Type __interface__ in the search box.
 > - Select __ietf-interfaces 2014-05-08__ and include it in the module set.
 > - Click __Locate and add missing dependencies__.
 
 <img src="./images/ys019_if_ietf_mset_01.png " width="75%">
 
-A module set of INTERFACE features is created that also incorporates dependent modules.
+A module set of INTERFACE feature is created that also incorporates dependent module.
 
 <img src="./images/ys020_if_ietf_mset_02.png " width="75%">
 
@@ -1064,7 +1062,7 @@ You can pull the config with NETCONF like below.
 
 ### __Create All Feature Module Set__
 
-If you can create NEDs using all the modules in __UM models__, you can handle devices flexibly like CLI NEDs. 
+If you can create a NED using all the modules in __UM models__, you can handle devices flexibly like CLI NED. 
 
 Create a module set using all modules of __UM models__ in Cisco YANG Suite. If the module set is generated without problems with dependencies, it is assumed that the NETCONF NED can also be created.
 
@@ -1141,7 +1139,7 @@ netconf-ned-builder project cisco-iosxr 7.2.2
 developer@ncs#
 ```
 
-Change `device-type` and `net-id` to `netconf` so that you can initiate a NETCONF connection to `dist-rtr01` and collect the list of supported YANG modules.
+Change `device-type` and `ned-id` to `netconf` so that you can initiate a NETCONF connection to `dist-rtr01` and collect the list of supported YANG modules.
 
 ```conf
 developer@ncs# config t
@@ -1855,5 +1853,13 @@ Route Distinguisher: 65432:2222 (default for vrf B)
 Processed 4 prefixes, 4 paths
 RP/0/RP0/CPU0:dist-rtr01#
 ```
+
+## Additional Resources
+
+* [Cisco Network Services Orchestrator (NSO) Dev Center](https://developer.cisco.com/site/nso/)
+* [OS/platform-specific YANG models for Cisco's IOS-XR platforms](https://github.com/YangModels/yang/tree/main/vendor/cisco/xr)
+* [Programmability Configuration Guide for Cisco ASR 9000 Series Routers](https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/asr9k-r7-8/programmability/configuration/guide/b-programmability-cg-asr9000-78x.html)
+* [Cisco Feature Navigator](https://cfnng.cisco.com/ios-xr/yang-explorer/view-data-model?platform=ncs5500)
+* [CLI to Yang Mapping Tool](https://www.cisco.com/c/en/us/td/docs/iosxr/ncs5500/programmability/78x/b-programmability-cg-ncs5500-78x/drive-network-automation-using-programmable-yang-data-models.html#Cisco_Concept.dita_4b78c4f2-21db-4b2f-a0fb-309a5482ffac)
 
 
