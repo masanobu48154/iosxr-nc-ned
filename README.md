@@ -376,6 +376,12 @@ Since the target configuration of NETCONF NED is adding L3VPN to SR-MPLS, the ne
 6. [Create OSPF Feature Module Set](#6-create-ospf-feature-module-set)
 7. [Create All UM models Module Set](#7-create-all-um-models-module-set)
 
+> #### __[CLI to Yang Mapping Tool](https://www.cisco.com/c/en/us/td/docs/iosxr/ncs5500/programmability/78x/b-programmability-cg-ncs5500-78x/drive-network-automation-using-programmable-yang-data-models.html#Cisco_Concept.dita_4b78c4f2-21db-4b2f-a0fb-309a5482ffac "CLI to Yang Mapping Tool")__
+> 
+> The CLI to Yang describer tool is a component in the IOS XR software. It helps in mapping the CLI command with its equivalent data models. With this tool, network automation using data models can be adapted with ease.
+> 
+> In this demo, we will select the YANG module without using this tool so that it can be useful when creating NEDs on devices other than IOS XR.
+
 ### __1. Create New Device Profile__<a name="1-create-new-device-profile"></a>
 
 Create a profile for your device to download and try YANG modules.
