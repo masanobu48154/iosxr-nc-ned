@@ -214,12 +214,17 @@ if __name__ == '__main__':
     ob.start_lab()
     while ob.ping(dist_rtr01) != 0:
         sec += 5
-        print(f"Wait until dist-rtr01 starts up. {sec} seconds passed")
+        if sec >= 60:
+            q, r = sec // 60, sec % 60
+            print(f"Wait until dist-rtr01 starts up. {q} minutes {r} seconds passed")
+        else:
+            print(f"Wait until dist-rtr01 starts up. {sec} seconds passed")
         time.sleep(4)
     print("Dist-rtr01. started.")
     while ob.ping(dist_rtr02) != 0:
         sec += 5
-        print(f"Wait until dist-rtr02 starts up. {sec} seconds passed")
+        q, r = sec // 60, sec % 60
+        print(f"Wait until dist-rtr02 starts up. {q} minutes {r} seconds passed")
         time.sleep(4)
     print("Dist-rtr02. started.")
 
