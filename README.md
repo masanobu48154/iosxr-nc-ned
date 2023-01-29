@@ -1,5 +1,7 @@
 # Demo of CLI NED to NETCONF NED Migration
 
+[![Run in Cisco Cloud IDE](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-runable-icon.svg)](https://developer.cisco.com/devenv/?id=devenv-vscode-base&GITHUB_SOURCE_REPO=https://github.com/masanobu48154/webexbot-openai)
+
 ## Overview
 
 This repository demonstrates creating an IOS-XR NETCONF NED using the Cisco NSO service application in the DevNet sandbox and migrating from the CLI NED to the created NETCONF NED.
