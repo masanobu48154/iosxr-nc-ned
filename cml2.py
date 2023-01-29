@@ -208,13 +208,16 @@ if __name__ == '__main__':
     passwd = os.environ['CML_PASSWORD']
     dist_rtr01 = "10.10.20.175"
     dist_rtr02 = "10.10.20.176"
+    sec = 0
     ob = Cml2(host, uname, passwd)
     ob.delete_labs()
     ob.start_lab()
     while ob.ping(dist_rtr01) != 0:
-        print("Wait until dist-rtr01 starts up.")
+        sec += 5
+        print(f"Wait until dist-rtr01 starts up. {sec} seconds passed")
     print("Dist-rtr01. started.")
     while ob.ping(dist_rtr02) != 0:
-        print("Wait until dist-rtr02 starts up.")
+        sec += 5
+        print(f"Wait until dist-rtr02 starts up. {sec} seconds passed")
     print("Dist-rtr02. started.")
 
