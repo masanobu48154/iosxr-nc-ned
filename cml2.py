@@ -5,6 +5,7 @@ import time
 import urllib3
 import os
 import json
+import subprocess
 from urllib3.exceptions import InsecureRequestWarning
 urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -58,6 +59,18 @@ class Cml2:
         res_post_login = s.post(
             login_url, data=self.login_data, headers=self.headers, verify=False)
         self.headers_br["Authorization"] = f"Bearer {res_post_login.json()}"
+
+    def ping(self, target):
+        """
+        Function to ping.
+        This function requires target address.
+        Returns
+        -------
+        str
+            Return code
+        """
+        res = subprocess.run(["ping", target],stdout=subprocess.PIPE)
+        return res.returncode
 
     def import_lab(self):
         """
@@ -193,9 +206,15 @@ if __name__ == '__main__':
     host = "10.10.20.161"
     uname = os.environ['CML_USERNAME']
     passwd = os.environ['CML_PASSWORD']
+    dist_rtr01 = "10.10.20.175"
+    dist_rtr02 = "10.10.20.176"
     ob = Cml2(host, uname, passwd)
     ob.delete_labs()
     ob.start_lab()
-
-
+    while ob.ping(dist_rtr01) != 0:
+        print("Wait until dist-rtr01 starts up.")
+    print("Dist-rtr01. started.")
+    while ob.ping(dist_rtr02) != 0:
+        print("Wait until dist-rtr02 starts up.")
+    print("Dist-rtr02. started.")
 
