@@ -69,7 +69,7 @@ class Cml2:
         str
             Return code
         """
-        res = subprocess.run(["ping", target, "-c", "5", "-w", "5000"],stdout=subprocess.PIPE)
+        res = subprocess.run(["ping", target, "-c", "1", "-w", "1"],stdout=subprocess.PIPE)
         return res.returncode
 
     def import_lab(self):
@@ -215,9 +215,11 @@ if __name__ == '__main__':
     while ob.ping(dist_rtr01) != 0:
         sec += 5
         print(f"Wait until dist-rtr01 starts up. {sec} seconds passed")
+        time.sleep(4)
     print("Dist-rtr01. started.")
     while ob.ping(dist_rtr02) != 0:
         sec += 5
         print(f"Wait until dist-rtr02 starts up. {sec} seconds passed")
+        time.sleep(4)
     print("Dist-rtr02. started.")
 
