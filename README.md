@@ -77,24 +77,33 @@ Go to the iosxr-nc-ned directory and set the CML2 username and password as envir
 
 Run cml2.py.
 
+It will take about 20 minutes for the IOS XRv 9000 to boot up, so have a cup of coffee and wait.
+
 ```shell
-(py3venv) [developer@devbox iosxr-nc-ned]$ python3 cml2.py 
+(py3venv) [developer@devbox iosxr-nc-ned]$ python3 cml2.py
 Getting Authentication token
-Lab stopped !! Lab ID = dd66d7
-Lab wiped !! Lab ID = dd66d7
-Lab deleted !! Lab ID = dd66d7
+Lab stopped !! Lab ID = 7ac43a
+Lab wiped !! Lab ID = 7ac43a
+Lab deleted !! Lab ID = 7ac43a
 Getting Authentication token
 Importing lab
-Lab imported !! Lab ID = ef911e
-Lab started !! Lab ID = ef911e
-(py3venv) [developer@devbox iosxr-nc-ned]$ 
+Lab imported !! Lab ID = f2dd38
+Lab started !! Lab ID = f2dd38
+Wait until dist-rtr01 starts up. 5 seconds
+Wait until dist-rtr01 starts up. 10 seconds
+
+(snip)
+
+Wait until dist-rtr01 starts up. 17 minutes 50 seconds
+Wait until dist-rtr01 starts up. 17 minutes 55 seconds
+Dist-rtr01. started.
+Dist-rtr02. started.
+(py3venv) [developer@devbox iosxr-nc-ned]$
 ```
 
 Go to https://10.10.20.161 and log in to CML to verify that nso_lob has been imported.
 
 <img src="./images/cml_dashboard.png" width="75%">
-
-It takes a few minutes for the IOS XRv 9000 to boot up, so grab a cup of coffee and wait.
 
 ## Step 3: Apply CLI NED to new lab network<a name="apply-cli-ned-to-new-lab-network-step-3"></a>
 
