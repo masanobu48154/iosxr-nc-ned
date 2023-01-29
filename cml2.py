@@ -69,7 +69,7 @@ class Cml2:
         str
             Return code
         """
-        res = subprocess.run(["ping", target],stdout=subprocess.PIPE)
+        res = subprocess.run(["ping", target, "-c", "5", "-w", "5000"],stdout=subprocess.PIPE)
         return res.returncode
 
     def import_lab(self):
