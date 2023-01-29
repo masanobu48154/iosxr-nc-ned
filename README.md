@@ -483,12 +483,6 @@ Let's verify with NETCONF that the VRF config can be pulled from the device.
 
 You can pull the config with NETCONF like below.
 
-Modules found in the repository that augment the modules in this YANG set.
-
-YANG Suite also finds __Cisco-IOS-XR-um-router-bgp-cfg__, a module that augments __Cisco-IOS-XR-um-vrf-cfg__.
-This module is also required when creating a NED.
-- __Cisco-IOS-XR-um-router-bgp-cfg__
-
 <details>
 <summary><b>Click</b></summary>
 
@@ -544,7 +538,13 @@ This module is also required when creating a NED.
 ```
 
 </details>
+<br>
 
+Modules found in the repository that augment the modules in this YANG set.
+
+YANG Suite also finds __Cisco-IOS-XR-um-router-bgp-cfg__, a module that augments __Cisco-IOS-XR-um-vrf-cfg__.
+This module is also required when creating a NED.
+- __Cisco-IOS-XR-um-router-bgp-cfg__
 
 ### __4. Create INTERFACE Feature Module Set__<a name="4-create-interface-feature-module-set"></a>
 
@@ -564,7 +564,7 @@ A module set of INTERFACE feature is created that also incorporates dependent mo
 
 <img src="./images/ys020_if_ietf_mset_02.png " width="75%">
 
-> - Select the VRF feature module set created in the previous step for __INTERFACE YANG Set__.
+> - Select the INTERFACE feature module set created in the previous step for __INTERFACE YANG Set__.
 > - Select __ietf-interfaces__ for __Module(s)__.
 > - Click __Load Module(s)__.
 > - Select __get-config__ for __NETCONF Operation__.
@@ -586,7 +586,7 @@ You won't be able to pull the config like below.
 </rpc-reply>
 ```
 </details>
-
+<br>
 
 Next, let's verify with a module set that includes __openconfig-interfaces 2016-05-26__.
 
@@ -597,8 +597,6 @@ Load __openconfig-interfaces__ and mark the __interface list node__ to __run RPC
 <img src="./images/ys024_if_oconf_nc_01.png " width="75%">
 
 You can pull the config with NETCONF like below.
-
-The __interface__ config was pulled. It looks like you've pulled it off perfectly, but you're missing a __vrf__ definition.
 
 <details>
 <summary><b>Click</b></summary>
@@ -753,7 +751,9 @@ The __interface__ config was pulled. It looks like you've pulled it off perfectl
 ```
 
 </details>
+<br>
 
+The __interface__ config was pulled. It looks like you've pulled it off perfectly, but you're missing a __vrf__ definition.
 
 Finally, let's verify with a module set that includes __Cisco-IOS-XR-um-interface-cfg 2019-06-10__.
 
@@ -773,15 +773,6 @@ Load __Cisco-IOS-XR-um-interface-cfg__ and mark the __interface list node__ to _
 <img src="./images/ys027_if_um_nc_01.png " width="75%">
 
 You can pull the config with NETCONF like below.
-
-Interface configuration pulled. There is also a VRF definition, so the INTERFACE Feature will be fine with this module set.
-
-YANG Suite also detects some modules that augment __Cisco-IOS-XR-um-interface-cfg__.
-These modules are also required when creating a NED.
-- __Cisco-IOS-XR-um-if-ip-address-cfg__
-- __Cisco-IOS-XR-um-if-vrf-cfg__
-- __Cisco-IOS-XR-um-if-vrf-cfg__
-- __Cisco-IOS-XR-um-l2-ethernet-cfg__
 
 <details>
 <summary><b>Click</b></summary>
@@ -864,6 +855,16 @@ These modules are also required when creating a NED.
 ```
 
 </details>
+<br>
+
+Interface configuration pulled. There is also a VRF definition, so the INTERFACE Feature will be fine with this module set.
+
+YANG Suite also detects some modules that augment __Cisco-IOS-XR-um-interface-cfg__.
+These modules are also required when creating a NED.
+- __Cisco-IOS-XR-um-if-ip-address-cfg__
+- __Cisco-IOS-XR-um-if-vrf-cfg__
+- __Cisco-IOS-XR-um-if-vrf-cfg__
+- __Cisco-IOS-XR-um-l2-ethernet-cfg__
 
 
 ### __5. Create BGP Feature Module Set__<a name="5-create-bgp-feature-module-set"></a>
@@ -965,6 +966,7 @@ You can pull the config with NETCONF like below.
 ```
 
 </details>
+<br>
 
 
 ### __6. Create OSPF Feature Module Set__<a name="6-create-ospf-feature-module-set"></a>
@@ -1089,6 +1091,7 @@ You can pull the config with NETCONF like below.
 ```
 
 </details>
+<br>
 
 
 ### __7. Create All UM models Module Set__<a name="7-create-all-um-models-module-set"></a>
@@ -1376,6 +1379,7 @@ developer@ncs#
 
 Let's check the config of each synced feature.
 
+<br>
 <details>
 <summary><b>VRF</b></summary>
 
@@ -1436,8 +1440,7 @@ developer@ncs# show running-config devices device dist-rtr01 config vrfs | displ
 </config>
 ```
 </details>
-
-
+<br>
 
 <details>
 <summary><b>INTERFACE</b></summary>
@@ -1525,6 +1528,7 @@ developer@ncs# show running-config devices device dist-rtr01 config interfaces |
 </config>
 ```
 </details>
+<br>
 
 
 <details>
@@ -1599,7 +1603,7 @@ developer@ncs# show running-config devices device dist-rtr01 config um-router-bg
 ```
 
 </details>
-
+<br>
 
 <details>
 <summary><b>OSPF</b></summary>
@@ -1707,6 +1711,7 @@ developer@ncs# show running-config devices device dist-rtr01 config um-router-os
 ```
 
 </details>
+<br>
 
 ## Step 7: Try to configure<a name="try-to-configure-step-7"></a>
 
@@ -1739,7 +1744,7 @@ Configure VRF, INTERFACE, BGP, OSPF for dist-rtr01 and dist-rtr02 with the value
 | ------- | --- | ---------- | ---------- | ------------ | -------------- | ------- |---------------- |
 | B       | B   | 2.2.2.1    | 65432:2222 | bgp as 65432 | ipv4-unicast   | 2.2.2.1 | Gig0/0/0/1.2221<br>Loopback222 |
 
-
+<br>
 <details>
 <summary><b>dist-rtr01 configuration</b></summary>
 
@@ -1781,6 +1786,7 @@ passive enable
 ```
 
 </details>
+<br>
 
 
 ### dist-rtr02
@@ -1810,6 +1816,7 @@ passive enable
 | ------- | --- | ---------- | ---------- | ------------ | -------------- | ------- |---------------- |
 | B       | B   | 2.2.2.2    | 65432:2222 | bgp as 65432 | ipv4-unicast   | 2.2.2.2 | Gig0/0/0/1.2222<br>Loopback222 |
 
+<br>
 <details>
 <summary><b>dist-rtr02 configuration</b></summary>
 
@@ -1851,6 +1858,7 @@ passive enable
 ```
 
 </details>
+<br>
 
 ## Step 8: Verify<a name="verify-step-8"></a>
 
