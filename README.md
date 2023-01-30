@@ -1,5 +1,7 @@
 # Demo of CLI NED to NETCONF NED Migration
 
+[![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/masanobu48154/iosxr-nc-ned)
+
 ## Overview
 
 This repository demonstrates creating an IOS-XR NETCONF NED using the Cisco NSO service application in the DevNet sandbox and migrating from the CLI NED to the created NETCONF NED.
