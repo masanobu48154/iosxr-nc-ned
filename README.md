@@ -1715,7 +1715,9 @@ developer@ncs# show running-config devices device dist-rtr01 config um-router-os
 
 ## Step 7: Try to configure<a name="try-to-configure-step-7"></a>
 
-Configure VRF, INTERFACE, BGP, OSPF for dist-rtr01 and dist-rtr02 with the values below from NSO.
+Now let's add L3VPN to the SR-MPLS cloud using the new NETCONF NED.
+
+Configure VRF, INTERFACE, BGP, OSPF on dist-rtr01 and dist-rtr02 with the following values:
 
 ### dist-rtr01
 
